@@ -1,0 +1,36 @@
+<!DOCTYPE html><html lang="zh-CN"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><title>关于 - yulian Lab</title><meta name="description" content="Life is a journey — pause and see more."><link rel="stylesheet" href="/_astro/_page_.BP1t-4WM.css"></head> <body> <header id="header" class="clearfix"> <div class="container"> <div class="row"> <div class="site-name col-mb-12 col-9"> <a id="logo" href="/">yulian Lab</a>
+                    <p class="description">Life is a journey — pause and see more.</p> </div> <div class="site-search col-3 kit-hidden-tb"> <form id="search" method="get" action="/search" role="search"> <label for="s" class="sr-only">搜索</label> <input type="text" id="s" name="q" class="text" placeholder="输入关键字搜索"> <button type="submit" class="submit">搜索</button> </form> </div> <div class="col-mb-12"> <nav id="nav-menu" class="clearfix" role="navigation"> <a class href="/">首页</a> <a class="current" href="/about" title="关于">关于</a> </nav> </div> </div> </div> </header> <div id="body"> <div class="container"> <div class="row">  <div class="col-mb-12 col-8" id="main" role="main"> <article class="post" itemscope itemtype="http://schema.org/BlogPosting"> <h1 class="post-title" itemprop="name headline"> <a itemprop="url" href="/about">关于</a> </h1>  <div class="post-content" itemprop="articleBody"> <p>等待编辑…</p> </div> </article> </div> <div class="col-mb-12 col-offset-1 col-3 kit-hidden-tb" id="secondary" role="complementary">  <section class="widget"> <h3 class="widget-title">最新文章</h3> <ul class="widget-list"> <li><a href="/post/10">News</a></li> </ul> </section> <section class="widget"> <h3 class="widget-title">分类</h3> <ul class="widget-list"> <li><a href="/category/渗透">渗透</a></li> </ul> </section> <!-- 其它 --> <!-- <section class="widget">
+        <h3 class="widget-title">其它</h3>
+        <ul class="widget-list">
+            <li><a href="/rss.xml">文章 RSS</a></li>
+            <li><a href="https://astro.build">Astro</a></li>
+        </ul>
+    </section> --> </div>  <script type="module">function i(){const c=document.querySelectorAll(".toc-list a[data-target]");if(c.length===0)return;c.forEach(t=>{t.addEventListener("click",e=>{e.preventDefault();const n=t.getAttribute("data-target"),a=document.getElementById(n);a&&a.scrollIntoView({behavior:"smooth",block:"start"})})});const o=Array.from(c).map(t=>{const e=t.getAttribute("data-target");return document.getElementById(e)}).filter(Boolean);if(o.length===0)return;function r(){let t="";for(let e=o.length-1;e>=0;e--){const n=o[e];if(n.getBoundingClientRect().top<=100){t=n.id;break}}!t&&o.length>0&&o[0].getBoundingClientRect().top>100&&(t=""),c.forEach(e=>{e.getAttribute("data-target")===t?e.classList.add("active"):e.classList.remove("active")})}r(),window.addEventListener("scroll",r,{passive:!0})}function d(){document.querySelectorAll("pre.astro-code").forEach(o=>{const r=o.querySelector("code");if(!r)return;const t=document.createElement("button");t.className="copy-button",t.textContent="Copy",t.setAttribute("aria-label","Copy code"),o.style.position="relative",o.appendChild(t),t.addEventListener("click",async()=>{try{const e=r.innerText;await navigator.clipboard.writeText(e),document.querySelectorAll(".copy-button").forEach(n=>{n.textContent="Copy"}),t.textContent="Copied"}catch(e){console.error("Copy failed:",e),t.textContent="Failed",setTimeout(()=>{t.textContent="Copy"},2e3)}})}),document.addEventListener("copy",()=>{document.querySelectorAll(".copy-button").forEach(o=>{o.textContent="Copy"})},{capture:!0})}window.addEventListener("DOMContentLoaded",()=>{i(),d()});</script>  </div> </div> </div> <footer id="footer" role="contentinfo">
+&copy; 2026 <a href="/">yulian Lab</a>.
+    由 <a href="https://astro.build">Astro</a> 驱动.
+</footer>  <link rel="stylesheet" href="/viewer/viewer.min.css"> <script src="/viewer/viewer.min.js"></script> <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const postContent = document.querySelector('.post-content');
+        
+        if (postContent && postContent.querySelectorAll('img').length > 0) {
+            new Viewer(postContent, {
+                inline: false,      // 模态框模式（点击图片弹出）
+                button: true,       // 显示右上角关闭按钮
+                navbar: true,       // 显示底部缩略图导航栏（多图时可以像相册一样切换）
+                title: true,        // 显示图片标题（自动读取 Markdown 中图片的 alt 描述）
+                toolbar: true,      // 显示底部工具栏（包含放大、缩小、1:1、旋转、翻转等按钮）
+                tooltip: true,      // 缩放时显示百分比提示
+                movable: true,      // 允许鼠标拖拽移动图片
+                zoomable: true,     // 允许滚轮缩放
+                rotatable: true,    // 允许旋转图片
+                scalable: true,     // 允许翻转图片
+                transition: true,   // 开启 CSS3 平滑过渡动画
+                fullscreen: true,   // 允许全屏播放
+                keyboard: true,     // 支持键盘快捷键（ESC退出，左右方向键切换图片）
+                
+                zIndex: 9999,
+                zIndexInline: 9999
+            });
+        }
+    });
+</script> </body> </html>
