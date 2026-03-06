@@ -1,0 +1,298 @@
+<!DOCTYPE html><html lang="zh-CN"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><title>2025羊城杯初赛Reverse-PLUS详细wp - yulian Lab</title><meta name="description" content="Life is a journey — pause and see more."><link rel="stylesheet" href="/_astro/_page_.B12lxv6h.css"></head> <body> <header id="header" class="clearfix"> <div class="container"> <div class="row"> <div class="site-name col-mb-12 col-9"> <a id="logo" href="/">yulian Lab</a>
+                    <p class="description">Life is a journey — pause and see more.</p> </div> <div class="site-search col-3 kit-hidden-tb"> <form id="search" method="get" action="/search" role="search"> <label for="s" class="sr-only">搜索</label> <input type="text" id="s" name="q" class="text" placeholder="输入关键字搜索"> <button type="submit" class="submit">搜索</button> </form> </div> <div class="col-mb-12"> <nav id="nav-menu" class="clearfix" role="navigation"> <a class href="/">首页</a> <a class href="/about" title="关于">关于</a> </nav> </div> </div> </div> </header> <div id="body"> <div class="container"> <div class="row">  <div class="col-mb-12 col-8" id="main" role="main"> <article class="post" itemscope itemtype="http://schema.org/BlogPosting"> <h2 class="post-title" itemprop="name headline"> <a itemprop="url" href="/post/ycb-2025-reverse-plus">2025羊城杯初赛Reverse-PLUS详细wp</a> </h2> <ul class="post-meta">  <li>时间: <time datetime="2025-10-16T00:00:00.000Z" itemprop="datePublished">2025/10/16</time></li> <li>分类: <a href="/category/CTF">CTF</a></li> </ul> <div class="post-content" itemprop="articleBody"> <h2 id="思路">思路</h2>
+<h3 id="initpyd模块分析">init.pyd模块分析</h3>
+<p><img alt="image-20251015234327845" loading="lazy" decoding="async" fetchpriority="auto" width="1778" height="1321" src="/_astro/image-20251015234327845.DcJSPc-R_gkeun.webp" ></p>
+<p>查看代码，里面有一堆加法，然后传入了<code>init</code>中的方法<code>int()</code>、<code>exit()</code>、<code>exec</code>、<code>m()</code>方法</p>
+<p>先对python代码进行简单的简化</p>
+<p>查看一下<code>init.pyd</code>中的方法</p>
+<p><code>pyd_info.py:</code></p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#D73A49">import</span><span style="color:#24292E"> init</span></span>
+<span class="line"><span style="color:#24292E">x </span><span style="color:#D73A49">=</span><span style="color:#005CC5"> dir</span><span style="color:#24292E">(init)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#005CC5">print</span><span style="color:#24292E">(</span><span style="color:#032F62">"fun b: "</span><span style="color:#24292E"> ,init.b)</span></span>
+<span class="line"><span style="color:#005CC5">print</span><span style="color:#24292E">(</span><span style="color:#032F62">"fun c: "</span><span style="color:#24292E"> , init.c)</span></span>
+<span class="line"><span style="color:#005CC5">print</span><span style="color:#24292E">(</span><span style="color:#032F62">"fun e: "</span><span style="color:#24292E"> , init.e)</span></span>
+<span class="line"><span style="color:#005CC5">print</span><span style="color:#24292E">(</span><span style="color:#032F62">"fun exec: "</span><span style="color:#24292E"> , init.exec)</span></span>
+<span class="line"><span style="color:#005CC5">print</span><span style="color:#24292E">(</span><span style="color:#032F62">"fun exit: "</span><span style="color:#24292E"> , init.exit)</span></span>
+<span class="line"><span style="color:#005CC5">print</span><span style="color:#24292E">(</span><span style="color:#032F62">"fun int: "</span><span style="color:#24292E"> , init.int)</span></span>
+<span class="line"><span style="color:#005CC5">print</span><span style="color:#24292E">(</span><span style="color:#032F62">"fun m: "</span><span style="color:#24292E"> , init.m)</span></span>
+<span class="line"><span style="color:#005CC5">print</span><span style="color:#24292E">(</span><span style="color:#032F62">"fun p: "</span><span style="color:#24292E"> , init.p)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#005CC5">help</span><span style="color:#24292E">(init)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">#result:</span></span>
+<span class="line"><span style="color:#032F62">'''</span></span>
+<span class="line"><span style="color:#032F62">fun b:  &#x3C;function b64encode at 0x0000000001671F70></span></span>
+<span class="line"><span style="color:#032F62">fun c:  &#x3C;class 'unicorn.unicorn_py3.unicorn.Uc'></span></span>
+<span class="line"><span style="color:#032F62">fun e:  &#x3C;unicorn.unicorn_py3.arch.intel.UcIntel object at 0x0000000001522F10></span></span>
+<span class="line"><span style="color:#032F62">fun exec:  &#x3C;cyfunction exec at 0x000000000147F5F0></span></span>
+<span class="line"><span style="color:#032F62">fun exit:  &#x3C;built-in function eval></span></span>
+<span class="line"><span style="color:#032F62">fun int:  &#x3C;class 'str'></span></span>
+<span class="line"><span style="color:#032F62">fun m:  &#x3C;class 'operator.methodcaller'></span></span>
+<span class="line"><span style="color:#032F62">fun p:  &#x3C;built-in function print></span></span>
+<span class="line"><span style="color:#032F62">Help on module init:</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#032F62">NAME</span></span>
+<span class="line"><span style="color:#032F62">    init</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#032F62">FUNCTIONS</span></span>
+<span class="line"><span style="color:#032F62">    a2b_hex(hexstr, /)</span></span>
+<span class="line"><span style="color:#032F62">        Binary data of hexadecimal representation.</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#032F62">        hexstr must contain an even number of hex digits (upper or lower case).</span></span>
+<span class="line"><span style="color:#032F62">        This function is also available as "unhexlify()".</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#032F62">    exec(x)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#032F62">    exit = eval(source, globals=None, locals=None, /)</span></span>
+<span class="line"><span style="color:#032F62">        Evaluate the given source in the context of globals and locals.</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#032F62">        The source may be a string representing a Python expression</span></span>
+<span class="line"><span style="color:#032F62">        or a code object as returned by compile().</span></span>
+<span class="line"><span style="color:#032F62">        The globals must be a dictionary and locals can be any mapping,</span></span>
+<span class="line"><span style="color:#032F62">        defaulting to the current globals and locals.</span></span>
+<span class="line"><span style="color:#032F62">        If only globals is given, locals defaults to it.</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#032F62">    i = input(prompt=None, /)</span></span>
+<span class="line"><span style="color:#032F62">        Read a string from standard input.  The trailing newline is stripped.</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#032F62">        The prompt string, if given, is printed to standard output without a</span></span>
+<span class="line"><span style="color:#032F62">        trailing newline before reading input.</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#032F62">        If the user hits EOF (*nix: Ctrl-D, Windows: Ctrl-Z+Return), raise EOFError.</span></span>
+<span class="line"><span style="color:#032F62">        On *nix systems, readline is used if available.</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#032F62">    p = print(...)</span></span>
+<span class="line"><span style="color:#032F62">        print(value, ..., sep=' ', end='</span><span style="color:#005CC5">\n</span><span style="color:#032F62">', file=sys.stdout, flush=False)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#032F62">        Prints the values to a stream, or to sys.stdout by default.</span></span>
+<span class="line"><span style="color:#032F62">        Optional keyword arguments:</span></span>
+<span class="line"><span style="color:#032F62">        file:  a file-like object (stream); defaults to the current sys.stdout.</span></span>
+<span class="line"><span style="color:#032F62">        sep:   string inserted between values, default a space.</span></span>
+<span class="line"><span style="color:#032F62">        end:   string appended after the last value, default a newline.</span></span>
+<span class="line"><span style="color:#032F62">        flush: whether to forcibly flush the stream.</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#032F62">DATA</span></span>
+<span class="line"><span style="color:#032F62">    __test__ = {}</span></span>
+<span class="line"><span style="color:#032F62">    e = &#x3C;unicorn.unicorn_py3.arch.intel.UcIntel object></span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#032F62">FILE</span></span>
+<span class="line"><span style="color:#032F62">    c:\users</span><span style="color:#005CC5">\361</span><span style="color:#032F62">34\desktop</span><span style="color:#005CC5">\202</span><span style="color:#032F62">5羊城杯</span><span style="color:#005CC5">\r</span><span style="color:#032F62">e</span><span style="color:#005CC5">\r</span><span style="color:#032F62">e2\chal\init.pyd</span></span>
+<span class="line"><span style="color:#032F62">*/</span></span>
+<span class="line"><span style="color:#032F62">'''</span></span></code></pre>
+<p>从<code>help</code>中可以看出</p>
+<p><code>b = b64encode()</code></p>
+<p><code> p = print(...)</code></p>
+<p><code>i = input(prompt=None, /)</code></p>
+<p><code> exit = eval()</code></p>
+<p><code>e = &#x3C;unicorn.unicorn_py3.arch.intel.UcIntel object></code></p>
+<p><code>m = operator.methodcaller()</code></p>
+<p><code>init.int()</code>函数是<code>str</code>类型了，尝试调用这个函数</p>
+<p><img alt="image-20251016001416411" loading="lazy" decoding="async" fetchpriority="auto" width="573" height="201" src="/_astro/image-20251016001416411.CeVCh1ji_1j4SV2.webp" ></p>
+<p>这个函数实现了加法，返回<code>str</code>类型的和</p>
+<p><code>init.exec()</code>函数暂时看不出来，先放着，根据从<code>init.pyc</code>中得知的信息，将脚本简化</p>
+<h3 id="处理pluspy">处理plus.py</h3>
+<p>处理脚本：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#D73A49">import</span><span style="color:#24292E"> re</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">with</span><span style="color:#005CC5"> open</span><span style="color:#24292E">(</span><span style="color:#032F62">"plus.py"</span><span style="color:#24292E">, </span><span style="color:#032F62">"r"</span><span style="color:#24292E">) </span><span style="color:#D73A49">as</span><span style="color:#24292E"> f:</span></span>
+<span class="line"><span style="color:#24292E">    data </span><span style="color:#D73A49">=</span><span style="color:#24292E"> f.read()</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">matches </span><span style="color:#D73A49">=</span><span style="color:#24292E"> re.findall(</span><span style="color:#D73A49">r</span><span style="color:#032F62">'int</span><span style="color:#22863A;font-weight:bold">\(</span><span style="color:#005CC5">(.</span><span style="color:#D73A49">*?</span><span style="color:#005CC5">)</span><span style="color:#22863A;font-weight:bold">\)</span><span style="color:#032F62">'</span><span style="color:#24292E">, data)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">solve </span><span style="color:#D73A49">=</span><span style="color:#24292E"> []</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">for</span><span style="color:#24292E"> i </span><span style="color:#D73A49">in</span><span style="color:#24292E"> matches:</span></span>
+<span class="line"><span style="color:#D73A49">    if</span><span style="color:#24292E"> i </span><span style="color:#D73A49">==</span><span style="color:#032F62"> ''</span><span style="color:#24292E">:</span></span>
+<span class="line"><span style="color:#24292E">        solve.append(</span><span style="color:#032F62">''</span><span style="color:#24292E">)</span></span>
+<span class="line"><span style="color:#D73A49">    else</span><span style="color:#24292E">:</span></span>
+<span class="line"><span style="color:#24292E">        solve.append(</span><span style="color:#005CC5">eval</span><span style="color:#24292E">(i))</span></span>
+<span class="line"><span style="color:#24292E">    </span></span>
+<span class="line"><span style="color:#D73A49">for</span><span style="color:#24292E"> i, match </span><span style="color:#D73A49">in</span><span style="color:#005CC5"> enumerate</span><span style="color:#24292E">(matches):</span></span>
+<span class="line"><span style="color:#24292E">    data </span><span style="color:#D73A49">=</span><span style="color:#24292E"> data.replace(</span><span style="color:#D73A49">f</span><span style="color:#032F62">'int(</span><span style="color:#005CC5">{</span><span style="color:#24292E">match</span><span style="color:#005CC5">}</span><span style="color:#032F62">)'</span><span style="color:#24292E">, </span><span style="color:#D73A49">f</span><span style="color:#032F62">"'</span><span style="color:#005CC5">{</span><span style="color:#24292E">solve[i]</span><span style="color:#005CC5">}</span><span style="color:#032F62">'"</span><span style="color:#24292E">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">solve2 </span><span style="color:#D73A49">=</span><span style="color:#24292E"> []</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">matches </span><span style="color:#D73A49">=</span><span style="color:#24292E"> re.findall(</span><span style="color:#D73A49">r</span><span style="color:#032F62">'exit</span><span style="color:#22863A;font-weight:bold">\(</span><span style="color:#005CC5">(.</span><span style="color:#D73A49">*?</span><span style="color:#005CC5">)</span><span style="color:#22863A;font-weight:bold">\)</span><span style="color:#032F62">'</span><span style="color:#24292E">, data)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">for</span><span style="color:#24292E"> i </span><span style="color:#D73A49">in</span><span style="color:#24292E"> matches:</span></span>
+<span class="line"><span style="color:#24292E">    solve2.append(</span><span style="color:#005CC5">eval</span><span style="color:#24292E">(i))</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">for</span><span style="color:#24292E"> i, match </span><span style="color:#D73A49">in</span><span style="color:#005CC5"> enumerate</span><span style="color:#24292E">(matches):</span></span>
+<span class="line"><span style="color:#24292E">    data </span><span style="color:#D73A49">=</span><span style="color:#24292E"> data.replace(</span><span style="color:#D73A49">f</span><span style="color:#032F62">'exit(</span><span style="color:#005CC5">{</span><span style="color:#24292E">match</span><span style="color:#005CC5">}</span><span style="color:#032F62">)'</span><span style="color:#24292E">, </span><span style="color:#D73A49">f</span><span style="color:#032F62">"</span><span style="color:#005CC5">{</span><span style="color:#24292E">solve2[i]</span><span style="color:#005CC5">}</span><span style="color:#032F62">"</span><span style="color:#24292E">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">data </span><span style="color:#D73A49">=</span><span style="color:#24292E"> data.replace(</span><span style="color:#032F62">';'</span><span style="color:#24292E">,</span><span style="color:#032F62">'</span><span style="color:#005CC5">\n</span><span style="color:#032F62">'</span><span style="color:#24292E">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#005CC5">print</span><span style="color:#24292E">(data)</span></span>
+<span class="line"></span></code></pre>
+<p>处理之后代码:</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#D73A49">from</span><span style="color:#24292E"> init </span><span style="color:#D73A49">import</span><span style="color:#D73A49"> *</span></span>
+<span class="line"><span style="color:#24292E">m(</span><span style="color:#005CC5">exec</span><span style="color:#24292E">(</span><span style="color:#005CC5">30792292888306032</span><span style="color:#24292E">),</span><span style="color:#005CC5">16777216</span><span style="color:#24292E">,</span><span style="color:#005CC5">2097152</span><span style="color:#24292E">)(e)</span></span>
+<span class="line"><span style="color:#24292E">m(</span><span style="color:#005CC5">exec</span><span style="color:#24292E">(</span><span style="color:#005CC5">30792292888306032</span><span style="color:#24292E">),</span><span style="color:#005CC5">18874368</span><span style="color:#24292E">,</span><span style="color:#005CC5">65536</span><span style="color:#24292E">)(e)</span></span>
+<span class="line"><span style="color:#24292E">m(</span><span style="color:#005CC5">exec</span><span style="color:#24292E">(</span><span style="color:#005CC5">2018003706771258569829</span><span style="color:#24292E">),</span><span style="color:#005CC5">16777216</span><span style="color:#24292E">,</span><span style="color:#005CC5">exec</span><span style="color:#24292E">(</span><span style="color:#005CC5">2154308209104587365050518702243508477825638429417674506632669006169365944097218288620502508770072595029515733547630393909115142517795439449349606840082096284733042186109675198923974401239556369486310477745337218358380860128987662749468317325542233718690074933730651941880380559453</span><span style="color:#24292E">),)(e)</span></span>
+<span class="line"><span style="color:#24292E">m(</span><span style="color:#005CC5">exec</span><span style="color:#24292E">(</span><span style="color:#005CC5">2110235738289946063973</span><span style="color:#24292E">),</span><span style="color:#005CC5">44</span><span style="color:#24292E">,</span><span style="color:#005CC5">18939903</span><span style="color:#24292E">)(e)</span></span>
+<span class="line"><span style="color:#24292E">m(</span><span style="color:#005CC5">exec</span><span style="color:#24292E">(</span><span style="color:#005CC5">2018003706771258569829</span><span style="color:#24292E">),</span><span style="color:#005CC5">18878464</span><span style="color:#24292E">, i(</span><span style="color:#005CC5">exec</span><span style="color:#24292E">(</span><span style="color:#005CC5">520485229507545392928716380743873332979750615584</span><span style="color:#24292E">)).encode())(e)</span></span>
+<span class="line"><span style="color:#24292E">m(</span><span style="color:#005CC5">exec</span><span style="color:#24292E">(</span><span style="color:#005CC5">2110235738289946063973</span><span style="color:#24292E">),</span><span style="color:#005CC5">39</span><span style="color:#24292E">,</span><span style="color:#005CC5">18878464</span><span style="color:#24292E">)(e)</span></span>
+<span class="line"><span style="color:#24292E">m(</span><span style="color:#005CC5">exec</span><span style="color:#24292E">(</span><span style="color:#005CC5">2110235738289946063973</span><span style="color:#24292E">),</span><span style="color:#005CC5">43</span><span style="color:#24292E">,</span><span style="color:#005CC5">44</span><span style="color:#24292E">)(e)</span></span>
+<span class="line"><span style="color:#24292E">m(</span><span style="color:#005CC5">exec</span><span style="color:#24292E">(</span><span style="color:#005CC5">2110235738289946063973</span><span style="color:#24292E">),</span><span style="color:#005CC5">40</span><span style="color:#24292E">,</span><span style="color:#005CC5">7</span><span style="color:#24292E">)(e)</span></span>
+<span class="line"><span style="color:#24292E">m(</span><span style="color:#005CC5">exec</span><span style="color:#24292E">(</span><span style="color:#005CC5">1871008466716552426100</span><span style="color:#24292E">), </span><span style="color:#005CC5">16777216</span><span style="color:#24292E">, </span><span style="color:#005CC5">16777332</span><span style="color:#24292E">)(e)</span></span>
+<span class="line"><span style="color:#24292E">p(</span><span style="color:#005CC5">exec</span><span style="color:#24292E">(</span><span style="color:#005CC5">1735356260</span><span style="color:#24292E">)) </span><span style="color:#D73A49">if</span><span style="color:#24292E"> (b(m(</span><span style="color:#005CC5">exec</span><span style="color:#24292E">(</span><span style="color:#005CC5">7882826979490488676</span><span style="color:#24292E">), </span><span style="color:#005CC5">18878464</span><span style="color:#24292E">, </span><span style="color:#005CC5">44</span><span style="color:#24292E">)(e)).decode()</span><span style="color:#D73A49">==</span><span style="color:#005CC5"> exec</span><span style="color:#24292E">(</span><span style="color:#005CC5">636496797464929889819018589958474261894226380884858896837050849823120096559828809884712107801783610237788137002972622711849132377866432975817021</span><span style="color:#24292E">)) </span><span style="color:#D73A49">else</span><span style="color:#24292E"> p(</span><span style="color:#005CC5">exec</span><span style="color:#24292E">(</span><span style="color:#005CC5">31084432670685473</span><span style="color:#24292E">)) </span><span style="color:#6A737D">#type:ignore</span></span></code></pre>
+<h3 id="分析eminitexec">分析<code>e();m();init.exec</code></h3>
+<p>查看处理之后的代码，有大的一个<code>int</code>数值传入了<code>init.exec()</code>，调用这个函数查看</p>
+<p><img alt="image-20251016004049822" loading="lazy" decoding="async" fetchpriority="auto" width="1727" height="240" src="/_astro/image-20251016004049822.Fj5iS4Mx_25AxJC.webp" ></p>
+<p>这个函数实现了<code>int2str</code>的功能</p>
+<p>自己实现方法：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#D73A49">def</span><span style="color:#6F42C1"> int2bytes</span><span style="color:#24292E">(n, byteorder: </span><span style="color:#005CC5">str</span><span style="color:#D73A49"> =</span><span style="color:#032F62"> "big"</span><span style="color:#24292E">):</span></span>
+<span class="line"><span style="color:#D73A49">    if</span><span style="color:#24292E"> n </span><span style="color:#D73A49">==</span><span style="color:#005CC5"> 0</span><span style="color:#24292E">:</span></span>
+<span class="line"><span style="color:#D73A49">        return</span><span style="color:#D73A49"> b</span><span style="color:#032F62">"</span><span style="color:#005CC5">\x00</span><span style="color:#032F62">"</span></span>
+<span class="line"><span style="color:#24292E">    length </span><span style="color:#D73A49">=</span><span style="color:#24292E"> (n.bit_length() </span><span style="color:#D73A49">+</span><span style="color:#005CC5"> 7</span><span style="color:#24292E">) </span><span style="color:#D73A49">//</span><span style="color:#005CC5"> 8</span></span>
+<span class="line"><span style="color:#D73A49">    return</span><span style="color:#24292E"> n.to_bytes(length, byteorder)</span></span></code></pre>
+<p>接下来分析<code>m()  e()</code>方法</p>
+<p><code>m()</code>方法是<code>operator.methodcaller()</code>，这个方法用来创建函数，类似于回调函数</p>
+<p><code>m(x1, x2, x3)(e)</code>等价于<code>e.x1(x2,x3)</code></p>
+<p><code>e()</code>方法是<code>unicorn.unicorn_py3.arch.intel.UcIntel</code></p>
+<p><code>Unicorn</code> 是一个基于 <code>QEMU </code>的CPU 模拟器框架</p>
+<p>可以将上面e写成<code>e = unicorn.Uc(UC_ARCH_X86, UC_MODE_64)</code>，第一个参数是cpu架构，第二个参数是模式</p>
+<h3 id="还原代码">还原代码</h3>
+<p>根据上面的分析，就可以将<code>plus.py</code>还原成原本的代码</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#D73A49">from</span><span style="color:#24292E"> unicorn </span><span style="color:#D73A49">import</span><span style="color:#D73A49"> *</span></span>
+<span class="line"><span style="color:#D73A49">from</span><span style="color:#24292E"> unicorn.x86_const </span><span style="color:#D73A49">import</span><span style="color:#D73A49"> *</span></span>
+<span class="line"><span style="color:#D73A49">from</span><span style="color:#24292E"> operator </span><span style="color:#D73A49">import</span><span style="color:#24292E"> methodcaller</span></span>
+<span class="line"><span style="color:#D73A49">from</span><span style="color:#24292E"> base64 </span><span style="color:#D73A49">import</span><span style="color:#24292E"> b64encode </span><span style="color:#D73A49">as</span><span style="color:#24292E"> b</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">e </span><span style="color:#D73A49">=</span><span style="color:#24292E"> Uc(</span><span style="color:#005CC5">UC_ARCH_X86</span><span style="color:#24292E">, </span><span style="color:#005CC5">UC_MODE_64</span><span style="color:#24292E">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">e.mem_map(</span><span style="color:#005CC5">16777216</span><span style="color:#24292E">,</span><span style="color:#005CC5">2097152</span><span style="color:#24292E">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">e.mem_map(</span><span style="color:#005CC5">18874368</span><span style="color:#24292E">,</span><span style="color:#005CC5">65536</span><span style="color:#24292E">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">#写入汇编指令</span></span>
+<span class="line"><span style="color:#24292E">e.mem_write(</span><span style="color:#005CC5">16777216</span><span style="color:#24292E">,</span><span style="color:#D73A49">b</span><span style="color:#032F62">'</span><span style="color:#005CC5">\xf3\x0f\x1e\xfa</span><span style="color:#032F62">UH</span><span style="color:#005CC5">\x89\xe5</span><span style="color:#032F62">H</span><span style="color:#005CC5">\x89</span><span style="color:#032F62">}</span><span style="color:#005CC5">\xe8\x89</span><span style="color:#032F62">u</span><span style="color:#005CC5">\xe4\x89\xd0\x88</span><span style="color:#032F62">E</span><span style="color:#005CC5">\xe0\xc7</span><span style="color:#032F62">E</span><span style="color:#005CC5">\xfc\x00\x00\x00\x00\xeb</span><span style="color:#032F62">L</span><span style="color:#005CC5">\x8b</span><span style="color:#032F62">U</span><span style="color:#005CC5">\xfc</span><span style="color:#032F62">H</span><span style="color:#005CC5">\x8b</span><span style="color:#032F62">E</span><span style="color:#005CC5">\xe8</span><span style="color:#032F62">H</span><span style="color:#005CC5">\x01\xd0\x0f\xb6\x00\x8d\x0c\xc5\x00\x00\x00\x00\x8b</span><span style="color:#032F62">U</span><span style="color:#005CC5">\xfc</span><span style="color:#032F62">H</span><span style="color:#005CC5">\x8b</span><span style="color:#032F62">E</span><span style="color:#005CC5">\xe8</span><span style="color:#032F62">H</span><span style="color:#005CC5">\x01\xd0\x0f\xb6\x00</span><span style="color:#032F62">2E</span><span style="color:#005CC5">\xe0\x8d</span><span style="color:#032F62">4</span><span style="color:#005CC5">\x01\x8b</span><span style="color:#032F62">U</span><span style="color:#005CC5">\xfc</span><span style="color:#032F62">H</span><span style="color:#005CC5">\x8b</span><span style="color:#032F62">E</span><span style="color:#005CC5">\xe8</span><span style="color:#032F62">H</span><span style="color:#005CC5">\x01\xd0\x0f\xb6\x00\xc1\xe0\x05\x89\xc1\x8b</span><span style="color:#032F62">U</span><span style="color:#005CC5">\xfc</span><span style="color:#032F62">H</span><span style="color:#005CC5">\x8b</span><span style="color:#032F62">E</span><span style="color:#005CC5">\xe8</span><span style="color:#032F62">H</span><span style="color:#005CC5">\x01\xd0\x8d\x14\x0e\x88\x10\x83</span><span style="color:#032F62">E</span><span style="color:#005CC5">\xfc\x01\x8b</span><span style="color:#032F62">E</span><span style="color:#005CC5">\xfc</span><span style="color:#032F62">;E</span><span style="color:#005CC5">\xe4</span><span style="color:#032F62">r</span><span style="color:#005CC5">\xac\x90\x90</span><span style="color:#032F62">]'</span><span style="color:#24292E">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">e.reg_write(</span><span style="color:#005CC5">44</span><span style="color:#24292E">,</span><span style="color:#005CC5">18939903</span><span style="color:#24292E">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">e.mem_write(</span><span style="color:#005CC5">18878464</span><span style="color:#24292E">,</span><span style="color:#005CC5">input</span><span style="color:#24292E">(</span><span style="color:#032F62">"[+]input your flag: "</span><span style="color:#24292E">).encode())</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">e.reg_write(</span><span style="color:#005CC5">39</span><span style="color:#24292E">,</span><span style="color:#005CC5">18878464</span><span style="color:#24292E">)</span></span>
+<span class="line"><span style="color:#24292E">e.reg_write(</span><span style="color:#005CC5">43</span><span style="color:#24292E">,</span><span style="color:#005CC5">44</span><span style="color:#24292E">)</span></span>
+<span class="line"><span style="color:#24292E">e.reg_write(</span><span style="color:#005CC5">40</span><span style="color:#24292E">,</span><span style="color:#005CC5">7</span><span style="color:#24292E">)</span></span>
+<span class="line"><span style="color:#24292E">e.emu_start(</span><span style="color:#005CC5">16777216</span><span style="color:#24292E">,</span><span style="color:#005CC5">16777332</span><span style="color:#24292E">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#005CC5">print</span><span style="color:#24292E">(</span><span style="color:#032F62">"good"</span><span style="color:#24292E">) </span><span style="color:#D73A49">if</span><span style="color:#24292E"> (</span></span>
+<span class="line"><span style="color:#24292E">    b(e.mem_read(</span><span style="color:#005CC5">18878464</span><span style="color:#24292E">,</span><span style="color:#005CC5">44</span><span style="color:#24292E">)).decode()</span></span>
+<span class="line"><span style="color:#D73A49">    ==</span><span style="color:#032F62"> "425MvHMxtLqZ3ty3RZkw3mwwulNRjkswbpkDMK+3CDCOtbe6kzAqPyrcEAI="</span></span>
+<span class="line"><span style="color:#24292E">) </span><span style="color:#D73A49">else</span><span style="color:#005CC5"> print</span><span style="color:#24292E">(</span><span style="color:#032F62">"no way!"</span><span style="color:#24292E">)</span></span>
+<span class="line"></span></code></pre>
+<h3 id="逐行解析">逐行解析</h3>
+<ol>
+<li>
+<p><code>e = Uc(UC_ARCH_X86, UC_MODE_64)</code>
+创建一个 x86-64 的 Unicorn 模拟器实例</p>
+</li>
+<li>
+<p><code>e.mem_map(16777216,2097152)</code>
+在地址 <code>0x01000000</code>（十进制 16777216）映射 2MB 内存，作为放置并执行 shellcode 的区域</p>
+</li>
+<li>
+<p><code>e.mem_map(18874368,65536)</code>
+在地址 <code>0x01200000</code>（十进制 18874368）映射 64KB 内存，作为数据区用，来放输入 flag 等</p>
+</li>
+<li>
+<p><code>e.mem_write(16777216, b'\xf3\x0f\x1e\xfa...')</code>
+把一段机器码（长度 116 bytes）写到 <code>0x01000000</code></p>
+</li>
+<li>
+<p><code>e.reg_write(44,18939903)</code>
+给某个寄存器写入常数 <code>18939903</code> 代码里并没有以名字注明是哪个寄存器 其作用是给 shellcode 一个初始化值</p>
+</li>
+<li>
+<p><code>e.mem_write(18878464,input("[+]input your flag: ").encode())</code>
+把用户的输入写到地址 <code>18878464</code>  这个地址和上面 data 区的基址有关系：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>18878464 - 18874368 = 4096 = 0x1000</span></span></code></pre>
+<p>所以输入被写入 data 区内偏移 <code>0x1000</code> 的位置（也就是 <code>0x01201000</code>）</p>
+</li>
+<li>
+<p>三个 <code>reg_write</code>：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>e.reg_write(39,18878464)</span></span>
+<span class="line"><span>e.reg_write(43,44)</span></span>
+<span class="line"><span>e.reg_write(40,7)</span></span></code></pre>
+<p>这三行把函数参数或工作寄存器设为：</p>
+<ul>
+<li>一个指针（指向你放入的输入：<code>18878464</code>）</li>
+<li>一个长度 / 计数（<code>44</code>）</li>
+<li>另一个常数（<code>7</code>）
+在 x86-64 的调用约定里，整数参数通常通过 RDI/RSI/RDX/RCX/… 传递 这里使用具体的寄存器编号来配合 shellcode 读取参数</li>
+</ul>
+</li>
+<li>
+<p><code>e.emu_start(16777216,16777332)</code>
+开始在 <code>0x01000000</code> 执行，直到 <code>0x01000000 + 116</code> 执行过程中，shellcode 会读取/写入 data 区</p>
+</li>
+<li>
+<p>最后比较：</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>b(e.mem_read(18878464,44)).decode() == "425MvHMxtLqZ3ty3RZkw3mwwulNRjkswbpkDMK+3CDCOtbe6kzAqPyrcEAI="</span></span></code></pre>
+<p>先对处理后的 44 字节用 base64编码得到字符串，再和enc进行比较</p>
+</li>
+</ol>
+<h3 id="汇编分析">汇编分析</h3>
+<p><img alt="image-20251016014646900" loading="lazy" decoding="async" fetchpriority="auto" width="2059" height="973" src="/_astro/image-20251016014646900.BvyjjnVo_ZrFQEg.webp" ></p>
+<p>将汇编指令以二进制保存，使用ida打开分析，稍微处理一下数据类型和变量名</p>
+<p><img alt="image-20251016014839854" loading="lazy" decoding="async" fetchpriority="auto" width="1473" height="416" src="/_astro/image-20251016014839854.BVQr8BP3_7EXq8.webp" ></p>
+<p>这里使用异或和乘法进行运算，因为除法不能直接逆运算，所以要爆破</p>
+<h2 id="exp">Exp</h2>
+<p>写脚本爆破flag</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#D73A49">import</span><span style="color:#24292E"> base64</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">enc </span><span style="color:#D73A49">=</span><span style="color:#24292E"> base64.b64decode(</span><span style="color:#032F62">"425MvHMxtLqZ3ty3RZkw3mwwulNRjkswbpkDMK+3CDCOtbe6kzAqPyrcEAI="</span><span style="color:#24292E">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">flag </span><span style="color:#D73A49">=</span><span style="color:#032F62"> ''</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">for</span><span style="color:#24292E"> i </span><span style="color:#D73A49">in</span><span style="color:#005CC5"> range</span><span style="color:#24292E">(</span><span style="color:#005CC5">44</span><span style="color:#24292E">):</span></span>
+<span class="line"><span style="color:#D73A49">    for</span><span style="color:#24292E"> j </span><span style="color:#D73A49">in</span><span style="color:#005CC5"> range</span><span style="color:#24292E">(</span><span style="color:#005CC5">32</span><span style="color:#24292E">,</span><span style="color:#005CC5">127</span><span style="color:#24292E">):</span></span>
+<span class="line"><span style="color:#D73A49">        if</span><span style="color:#24292E"> ((</span><span style="color:#005CC5">8</span><span style="color:#D73A49"> *</span><span style="color:#24292E"> j) </span><span style="color:#D73A49">+</span><span style="color:#24292E"> (</span><span style="color:#005CC5">7</span><span style="color:#D73A49"> ^</span><span style="color:#24292E"> j) </span><span style="color:#D73A49">+</span><span style="color:#24292E"> (</span><span style="color:#005CC5">32</span><span style="color:#D73A49"> *</span><span style="color:#24292E"> j)) </span><span style="color:#D73A49">&#x26;0x</span><span style="color:#005CC5">ff</span><span style="color:#D73A49"> ==</span><span style="color:#24292E"> enc[i]:</span></span>
+<span class="line"><span style="color:#24292E">            flag </span><span style="color:#D73A49">+=</span><span style="color:#005CC5"> chr</span><span style="color:#24292E">(j)</span></span>
+<span class="line"><span style="color:#D73A49">            break</span></span>
+<span class="line"><span style="color:#005CC5">print</span><span style="color:#24292E">(flag)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">#result</span></span>
+<span class="line"><span style="color:#6A737D">#DASCTF{un1c0rn_1s_u4fal_And_h0w_ab0ut_exec?}</span></span></code></pre> </div>  </article> <ul class="post-near"> <li>上一篇: <a href="/post/ycb-2025-writeup">2025羊城杯初赛部分wp</a></li> <li>下一篇: 没有了</li> </ul> </div>  <div class="col-mb-12 col-offset-1 col-3 kit-hidden-tb" id="secondary" role="complementary"> <section class="widget" id="toc-widget"> <h3 class="widget-title">文章目录</h3> <ul class="widget-list toc-list"> <li class="toc-level-2"> <a href="#思路" data-target="思路">思路</a> </li><li class="toc-level-3"> <a href="#initpyd模块分析" data-target="initpyd模块分析">init.pyd模块分析</a> </li><li class="toc-level-3"> <a href="#处理pluspy" data-target="处理pluspy">处理plus.py</a> </li><li class="toc-level-3"> <a href="#分析eminitexec" data-target="分析eminitexec">分析e();m();init.exec</a> </li><li class="toc-level-3"> <a href="#还原代码" data-target="还原代码">还原代码</a> </li><li class="toc-level-3"> <a href="#逐行解析" data-target="逐行解析">逐行解析</a> </li><li class="toc-level-3"> <a href="#汇编分析" data-target="汇编分析">汇编分析</a> </li><li class="toc-level-2"> <a href="#exp" data-target="exp">Exp</a> </li> </ul> </section> <section class="widget"> <h3 class="widget-title">最新文章</h3> <ul class="widget-list"> <li><a href="/post/ycb-2025-reverse-plus">2025羊城杯初赛Reverse-PLUS详细wp</a></li><li><a href="/post/ycb-2025-writeup">2025羊城杯初赛部分wp</a></li><li><a href="/post/attacking-a-box-news">News</a></li> </ul> </section> <section class="widget"> <h3 class="widget-title">分类</h3> <ul class="widget-list"> <li><a href="/category/CTF">CTF</a></li><li><a href="/category/渗透">渗透</a></li> </ul> </section> <!-- 其它 --> <!-- <section class="widget">
+        <h3 class="widget-title">其它</h3>
+        <ul class="widget-list">
+            <li><a href="/rss.xml">文章 RSS</a></li>
+            <li><a href="https://astro.build">Astro</a></li>
+        </ul>
+    </section> --> </div>  <script type="module">function l(){const a=document.querySelectorAll(".toc-list a[data-target]");if(a.length===0)return;a.forEach(o=>{o.addEventListener("click",t=>{t.preventDefault();const r=o.getAttribute("data-target"),c=document.getElementById(r);c&&c.scrollIntoView({behavior:"smooth",block:"start"})})});const e=Array.from(a).map(o=>document.getElementById(o.getAttribute("data-target"))).filter(Boolean);function s(){let o="";for(let t=e.length-1;t>=0;t--)if(e[t].getBoundingClientRect().top<=100){o=e[t].id;break}a.forEach(t=>{t.classList.toggle("active",t.getAttribute("data-target")===o)})}s(),window.addEventListener("scroll",s,{passive:!0})}function u(){const a=document.querySelectorAll("pre.astro-code");let e=null;a.forEach(t=>{const r=t.querySelector("code");if(!r)return;const c=document.createElement("div");c.className="code-wrapper",t.parentNode.insertBefore(c,t),c.appendChild(t);const n=document.createElement("button");n.className="copy-button",n.innerHTML=`
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <rect x="9" y="9" width="13" height="13" rx="2"></rect>
+        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+      </svg>
+      <span>Copy</span>
+    `,c.appendChild(n),c.addEventListener("click",i=>{i.target.closest(".copy-button")||(document.querySelectorAll(".code-wrapper").forEach(d=>d.classList.remove("show-copy")),c.classList.add("show-copy"))}),n.addEventListener("click",async()=>{try{await navigator.clipboard.writeText(r.innerText),e&&e!==n&&o(e),s(n),e=n}catch{n.querySelector("span").textContent="Failed"}})}),document.addEventListener("click",t=>{t.target.closest(".code-wrapper")||document.querySelectorAll(".code-wrapper").forEach(r=>r.classList.remove("show-copy"))}),document.addEventListener("copy",()=>{e&&(o(e),e=null)});function s(t){t.classList.add("success"),t.querySelector("span").textContent="Copied!"}function o(t){t.classList.remove("success"),t.querySelector("span").textContent="Copy"}}window.addEventListener("DOMContentLoaded",()=>{l(),u()});</script>  </div> </div> </div> <footer id="footer" role="contentinfo">
+&copy; 2026 <a href="/">yulian Lab</a>.
+    由 <a href="https://astro.build">Astro</a> 驱动.
+</footer>  <link rel="stylesheet" href="/viewer/viewer.min.css"> <script src="/viewer/viewer.min.js"></script> <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const postContent = document.querySelector('.post-content');
+        
+        if (postContent && postContent.querySelectorAll('img').length > 0) {
+            new Viewer(postContent, {
+                inline: false,      // 模态框模式（点击图片弹出）
+                button: true,       // 显示右上角关闭按钮
+                navbar: true,       // 显示底部缩略图导航栏（多图时可以像相册一样切换）
+                title: true,        // 显示图片标题（自动读取 Markdown 中图片的 alt 描述）
+                toolbar: true,      // 显示底部工具栏（包含放大、缩小、1:1、旋转、翻转等按钮）
+                tooltip: true,      // 缩放时显示百分比提示
+                movable: true,      // 允许鼠标拖拽移动图片
+                zoomable: true,     // 允许滚轮缩放
+                rotatable: true,    // 允许旋转图片
+                scalable: true,     // 允许翻转图片
+                transition: true,   // 开启 CSS3 平滑过渡动画
+                fullscreen: true,   // 允许全屏播放
+                keyboard: true,     // 支持键盘快捷键（ESC退出，左右方向键切换图片）
+                
+                zIndex: 9999,
+                zIndexInline: 9999
+            });
+        }
+    });
+</script> </body> </html>
