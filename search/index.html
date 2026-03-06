@@ -43,17 +43,16 @@
     });
 </script> </body> </html>  <script>(function(){const pageSize = 4;
 
-    function removeMarkdown(md) {
+    function removeMarkdown(md: string) {
         if (!md) return '';
         return md
-            .replace(/!\[.*?\]\(.*?\)/g, '')    
-            .replace(/\[(.*?)\]\(.*?\)/g, '$1')
-            .replace(/[#*`~_]/g, '')            
-            .replace(/>\s?/g, '')             
-            .replace(/\n+/g, ' ')           
+            .replace(/!\[[^\]]*\]\([^)]*\)/g, '')
+            .replace(/\[([^\]]+)\]\([^)]*\)/g, '$1')
+            .replace(/[#*_`~>-]/g, '')
+            .replace(/[\r\n]+/g, ' ')
+            .replace(/\s+/g, ' ')
             .trim();
     }
-
     document.addEventListener('DOMContentLoaded', async () => {
         const urlParams = new URLSearchParams(window.location.search);
         const query = urlParams.get('q');
