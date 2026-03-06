@@ -1,5 +1,7 @@
-<!DOCTYPE html><html lang="zh-CN"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><title>搜索结果 - yulian Lab</title><meta name="description" content="Life is a journey — pause and see more."><link rel="stylesheet" href="/_astro/_page_.B12lxv6h.css"></head> <body> <header id="header" class="clearfix"> <div class="container"> <div class="row"> <div class="site-name col-mb-12 col-9"> <a id="logo" href="/">yulian Lab</a>
-                    <p class="description">Life is a journey — pause and see more.</p> </div> <div class="site-search col-3 kit-hidden-tb"> <form id="search" method="get" action="/search" role="search"> <label for="s" class="sr-only">搜索</label> <input type="text" id="s" name="q" class="text" placeholder="输入关键字搜索"> <button type="submit" class="submit">搜索</button> </form> </div> <div class="col-mb-12"> <nav id="nav-menu" class="clearfix" role="navigation"> <a class href="/">首页</a> <a class href="/about" title="关于">关于</a> </nav> </div> </div> </div> </header> <div id="body"> <div class="container"> <div class="row">  <div class="col-mb-12 col-8" id="main" role="main"> <h3 class="archive-title" id="search-title">正在加载搜索结果...</h3> <!-- 搜索结果列表 --> <div id="search-results"></div> <!-- 纯前端生成的翻页容器 --> <div id="search-pagination"></div> </div> <div class="col-mb-12 col-offset-1 col-3 kit-hidden-tb" id="secondary" role="complementary">  <section class="widget"> <h3 class="widget-title">最新文章</h3> <ul class="widget-list"> <li><a href="/post/ycb-2025-reverse-plus">2025羊城杯初赛Reverse-PLUS详细wp</a></li><li><a href="/post/ycb-2025-writeup">2025羊城杯初赛部分wp</a></li><li><a href="/post/attacking-a-box-news">News</a></li> </ul> </section> <section class="widget"> <h3 class="widget-title">分类</h3> <ul class="widget-list"> <li><a href="/category/CTF">CTF</a></li><li><a href="/category/渗透">渗透</a></li> </ul> </section> <!-- 其它 --> <!-- <section class="widget">
+<!DOCTYPE html><html lang="zh-CN"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><title>搜索结果 - yulian Lab</title><meta name="description" content="Life is a journey — pause and see more."><link rel="stylesheet" href="/_astro/_page_.B12lxv6h.css">
+<style>mark.search-highlight{background-color:#fff3cd;padding:0 2px;border-radius:2px}
+</style></head> <body> <header id="header" class="clearfix"> <div class="container"> <div class="row"> <div class="site-name col-mb-12 col-9"> <a id="logo" href="/">yulian Lab</a>
+                    <p class="description">Life is a journey — pause and see more.</p> </div> <div class="site-search col-3 kit-hidden-tb"> <form id="search" method="get" action="/search" role="search"> <label for="s" class="sr-only">搜索</label> <input type="text" id="s" name="q" class="text" placeholder="输入关键字搜索"> <button type="submit" class="submit">搜索</button> </form> </div> <div class="col-mb-12"> <nav id="nav-menu" class="clearfix" role="navigation"> <a class href="/">首页</a> <a class href="/about" title="关于">关于</a> </nav> </div> </div> </div> </header> <div id="body"> <div class="container"> <div class="row">  <div class="col-mb-12 col-8" id="main" role="main"> <h3 class="archive-title" id="search-title">正在加载搜索结果...</h3> <div id="search-results"></div> <div id="search-pagination"></div> </div> <div class="col-mb-12 col-offset-1 col-3 kit-hidden-tb" id="secondary" role="complementary">  <section class="widget"> <h3 class="widget-title">最新文章</h3> <ul class="widget-list"> <li><a href="/post/ycb-2025-reverse-plus">2025羊城杯初赛Reverse-PLUS详细wp</a></li><li><a href="/post/ycb-2025-writeup">2025羊城杯初赛部分wp</a></li><li><a href="/post/天一永安杯初赛-2025-writeup">第八届宁波市网络安全大赛reverse-wp</a></li><li><a href="/post/exchange">群友靶机-exchange</a></li><li><a href="/post/attacking-a-box-news">News</a></li> </ul> </section> <section class="widget"> <h3 class="widget-title">分类</h3> <ul class="widget-list"> <li><a href="/category/CTF">CTF</a></li><li><a href="/category/渗透">渗透</a></li> </ul> </section> <!-- 其它 --> <!-- <section class="widget">
         <h3 class="widget-title">其它</h3>
         <ul class="widget-list">
             <li><a href="/rss.xml">文章 RSS</a></li>
@@ -39,13 +41,22 @@
             });
         }
     });
-</script> </body> </html> <!-- 使用 define:vars 把后端的配置传给前端 JS --> <script>(function(){const pageSize = 4;
+</script> </body> </html>  <script>(function(){const pageSize = 4;
+
+    function removeMarkdown(md) {
+        if (!md) return '';
+        return md
+            .replace(/!\[.*?\]\(.*?\)/g, '')    
+            .replace(/\[(.*?)\]\(.*?\)/g, '$1')
+            .replace(/[#*`~_]/g, '')            
+            .replace(/>\s?/g, '')             
+            .replace(/\n+/g, ' ')           
+            .trim();
+    }
 
     document.addEventListener('DOMContentLoaded', async () => {
-        // 获取 URL 中的查询参数
         const urlParams = new URLSearchParams(window.location.search);
         const query = urlParams.get('q');
-        // 获取当前页码，默认为 1
         let currentPage = parseInt(urlParams.get('page') || '1', 10);
         
         const titleEl = document.getElementById('search-title');
@@ -58,18 +69,15 @@
         }
 
         try {
-            // 请求全局 JSON 索引
             const response = await fetch('/search.json');
             const posts = await response.json();
 
-            // 根据关键字过滤文章
             const lowerQuery = query.toLowerCase();
             const filteredPosts = posts.filter((post) => 
                 post.title.toLowerCase().includes(lowerQuery) || 
                 post.body.toLowerCase().includes(lowerQuery)
             );
 
-            // 如果没有结果
             if (filteredPosts.length === 0) {
                 titleEl.textContent = `包含关键字 "${query}" 的文章`;
                 resultsEl.innerHTML = `
@@ -80,59 +88,50 @@
                 return;
             }
 
-            // --- 计算分页数据 ---
             const totalPosts = filteredPosts.length;
             const totalPages = Math.ceil(totalPosts / pageSize);
 
-            // 页码越界处理
             if (currentPage < 1) currentPage = 1;
             if (currentPage > totalPages) currentPage = totalPages;
 
             titleEl.textContent = `包含关键字 "${query}" 的文章 (共 ${totalPosts} 篇)`;
 
-            // 切割出当前页需要显示的数据
             const startIdx = (currentPage - 1) * pageSize;
             const endIdx = startIdx + pageSize;
             const paginatedPosts = filteredPosts.slice(startIdx, endIdx);
 
-            // --- 渲染文章列表 ---
             let html = '';
             paginatedPosts.forEach((post) => {
                 const date = new Date(post.date).toLocaleDateString('zh-CN', {
                     year: 'numeric', month: '2-digit', day: '2-digit'
                 });
                 
-                // 高亮关键字函数
+                const cleanText = removeMarkdown(post.body);
+
                 function highlightKeyword(text) {
                     if (!query) return text;
                     const regex = new RegExp(`(${query})`, 'gi');
-                    return text.replace(regex, '<mark>$1</mark>');
+                    return text.replace(regex, '<mark class="search-highlight">$1</mark>');
                 }
                 
-                // 截取关键字前后的内容
                 let excerpt = '';
-                const lowerBody = post.body.toLowerCase();
-                const lowerQuery = query.toLowerCase();
+                const lowerBody = cleanText.toLowerCase(); 
                 const matchIndex = lowerBody.indexOf(lowerQuery);
                 
                 if (matchIndex !== -1) {
-                    // 找到关键字，显示关键字前后各60个字符
                     const contextStart = Math.max(0, matchIndex - 60);
-                    const contextEnd = Math.min(post.body.length, matchIndex + query.length + 60);
+                    const contextEnd = Math.min(cleanText.length, matchIndex + query.length + 60); 
                     
                     let prefix = contextStart > 0 ? '...' : '';
-                    let suffix = contextEnd < post.body.length ? '...' : '';
+                    let suffix = contextEnd < cleanText.length ? '...' : '';
                     
-                    excerpt = prefix + post.body.substring(contextStart, contextEnd) + suffix;
+                    excerpt = prefix + cleanText.substring(contextStart, contextEnd) + suffix;
                 } else {
-                    // 没找到关键字，显示前150字
-                    excerpt = post.body.length > 150 ? post.body.substring(0, 150) + '...' : post.body;
+                    excerpt = cleanText.length > 150 ? cleanText.substring(0, 150) + '...' : cleanText;
                 }
                 
                 excerpt = highlightKeyword(excerpt);
-                
                 const highlightedTitle = highlightKeyword(post.title);
-                
                 html += `
                     <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
                         <h2 class="post-title" itemprop="name headline">
@@ -150,16 +149,13 @@
             });
             resultsEl.innerHTML = html;
 
-            // --- 渲染翻页按钮 ---
             if (totalPages > 1) {
                 let paginationHTML = '<ol class="page-navigator">';
                 
-                // 上一页
                 if (currentPage > 1) {
                     paginationHTML += `<li class="prev"><a href="?q=${encodeURIComponent(query)}&page=${currentPage - 1}">&laquo; 前一页</a></li>`;
                 }
 
-                // 数字页码
                 for (let i = 1; i <= totalPages; i++) {
                     if (i === currentPage) {
                         paginationHTML += `<li class="current"><a href="?q=${encodeURIComponent(query)}&page=${i}">${i}</a></li>`;
@@ -168,7 +164,6 @@
                     }
                 }
 
-                // 下一页
                 if (currentPage < totalPages) {
                     paginationHTML += `<li class="next"><a href="?q=${encodeURIComponent(query)}&page=${currentPage + 1}">后一页 &raquo;</a></li>`;
                 }
