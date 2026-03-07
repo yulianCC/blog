@@ -1,0 +1,129 @@
+<!DOCTYPE html><html lang="zh-CN"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><title>第七届浙江省大学生网络与信息安全竞赛决赛reverse-wp - yulian Lab</title><meta name="description" content="Life is a journey — pause and see more."><link rel="stylesheet" href="/_astro/_page_.B12lxv6h.css"></head> <body> <header id="header" class="clearfix"> <div class="container"> <div class="row"> <div class="site-name col-mb-12 col-9"> <a id="logo" href="/">yulian Lab</a>
+                    <p class="description">Life is a journey — pause and see more.</p> </div> <div class="site-search col-3 kit-hidden-tb"> <form id="search" method="get" action="/search" role="search"> <label for="s" class="sr-only">搜索</label> <input type="text" id="s" name="q" class="text" placeholder="输入关键字搜索"> <button type="submit" class="submit">搜索</button> </form> </div> <div class="col-mb-12"> <nav id="nav-menu" class="clearfix" role="navigation"> <a class href="/">首页</a> <a class href="/about" title="关于">关于</a> </nav> </div> </div> </div> </header> <div id="body"> <div class="container"> <div class="row">  <div class="col-mb-12 col-8" id="main" role="main"> <article class="post" itemscope itemtype="http://schema.org/BlogPosting"> <h2 class="post-title" itemprop="name headline"> <a itemprop="url" href="/post/dasctf-2024-reverse">第七届浙江省大学生网络与信息安全竞赛决赛reverse-wp</a> </h2> <ul class="post-meta">  <li>时间: <time datetime="2024-11-09T00:00:00.000Z" itemprop="datePublished">2024/11/09</time></li> <li>分类: <a href="/category/CTF">CTF</a></li> </ul> <div class="post-content" itemprop="articleBody"> <h2 id="reverse1">Reverse1</h2>
+<h3 id="思路">思路：</h3>
+<p>64位elf</p>
+<p><img alt="image-20241110155524669" loading="lazy" decoding="async" fetchpriority="auto" width="677" height="321" src="/_astro/image-20241110155524669.CUywEf3e_2deEdM.webp" ></p>
+<p>ida分析</p>
+<p><img alt="image-20241110160145828" loading="lazy" decoding="async" fetchpriority="auto" width="1411" height="958" src="/_astro/image-20241110160145828.SZvfTj6T_2f17eX.webp" ></p>
+<p>分析这几个函数</p>
+<p><code>init</code>函数初始化了一个<code>table</code>，一看就是<code>rc4</code>加密</p>
+<p><img alt="image-20241110160217367" loading="lazy" decoding="async" fetchpriority="auto" width="1406" height="804" src="/_astro/image-20241110160217367.DJmV42_r_Z26wX3d.webp" ></p>
+<p>继续看<code>crypt1</code> 和 <code>crypt2</code>, 是魔改的<code>rc4</code></p>
+<p><img alt="image-20241110160408630" loading="lazy" decoding="async" fetchpriority="auto" width="1478" height="718" src="/_astro/image-20241110160408630.oZWjeiMO_Z1W4ICf.webp" ></p>
+<p><code>before_main</code>函数加密key，秘钥是<code>keykey</code></p>
+<p><strong><img alt="image-20241110162211876" loading="lazy" decoding="async" fetchpriority="auto" width="884" height="412" src="/_astro/image-20241110162211876.DTCjRsYE_1jEVpk.webp" ></strong></p>
+<p><code>after_main</code>函数使用加密之后的key作为秘钥加密了flag</p>
+<p><img alt="image-20241110162622396" loading="lazy" decoding="async" fetchpriority="auto" width="780" height="606" src="/_astro/image-20241110162622396.DWV2U_TD_Z1li9Bo.webp" ></p>
+<h3 id="exp">exp：</h3>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#D73A49">def</span><span style="color:#6F42C1"> rc4_init</span><span style="color:#24292E">(key):</span></span>
+<span class="line"><span style="color:#24292E">    s </span><span style="color:#D73A49">=</span><span style="color:#005CC5"> list</span><span style="color:#24292E">(</span><span style="color:#005CC5">range</span><span style="color:#24292E">(</span><span style="color:#005CC5">256</span><span style="color:#24292E">))</span></span>
+<span class="line"><span style="color:#24292E">    j </span><span style="color:#D73A49">=</span><span style="color:#005CC5"> 0</span></span>
+<span class="line"><span style="color:#24292E">    key_len </span><span style="color:#D73A49">=</span><span style="color:#005CC5"> len</span><span style="color:#24292E">(key)</span></span>
+<span class="line"><span style="color:#24292E">    </span></span>
+<span class="line"><span style="color:#D73A49">    for</span><span style="color:#24292E"> i </span><span style="color:#D73A49">in</span><span style="color:#005CC5"> range</span><span style="color:#24292E">(</span><span style="color:#005CC5">256</span><span style="color:#24292E">):</span></span>
+<span class="line"><span style="color:#24292E">        j </span><span style="color:#D73A49">=</span><span style="color:#24292E"> (j </span><span style="color:#D73A49">+</span><span style="color:#24292E"> s[i] </span><span style="color:#D73A49">+</span><span style="color:#24292E"> key[i </span><span style="color:#D73A49">%</span><span style="color:#24292E"> key_len]) </span><span style="color:#D73A49">%</span><span style="color:#005CC5"> 256</span></span>
+<span class="line"><span style="color:#24292E">        s[i], s[j] </span><span style="color:#D73A49">=</span><span style="color:#24292E"> s[j], s[i] </span></span>
+<span class="line"><span style="color:#D73A49">    return</span><span style="color:#24292E"> s</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">def</span><span style="color:#6F42C1"> rc4_crypt1</span><span style="color:#24292E">(s, data):</span></span>
+<span class="line"><span style="color:#24292E">    i, j </span><span style="color:#D73A49">=</span><span style="color:#005CC5"> 0</span><span style="color:#24292E">, </span><span style="color:#005CC5">0</span></span>
+<span class="line"><span style="color:#24292E">    res </span><span style="color:#D73A49">=</span><span style="color:#24292E"> []</span></span>
+<span class="line"><span style="color:#D73A49">    for</span><span style="color:#24292E"> char </span><span style="color:#D73A49">in</span><span style="color:#24292E"> data:</span></span>
+<span class="line"><span style="color:#24292E">        i </span><span style="color:#D73A49">=</span><span style="color:#24292E"> (i </span><span style="color:#D73A49">+</span><span style="color:#005CC5"> 1</span><span style="color:#24292E">) </span><span style="color:#D73A49">%</span><span style="color:#005CC5"> 256</span></span>
+<span class="line"><span style="color:#24292E">        j </span><span style="color:#D73A49">=</span><span style="color:#24292E"> (j </span><span style="color:#D73A49">+</span><span style="color:#24292E"> s[i]) </span><span style="color:#D73A49">%</span><span style="color:#005CC5"> 256</span></span>
+<span class="line"><span style="color:#24292E">        s[i], s[j] </span><span style="color:#D73A49">=</span><span style="color:#24292E"> s[j], s[i]</span></span>
+<span class="line"><span style="color:#24292E">        k </span><span style="color:#D73A49">=</span><span style="color:#24292E"> s[(s[i] </span><span style="color:#D73A49">+</span><span style="color:#24292E"> s[j]) </span><span style="color:#D73A49">%</span><span style="color:#005CC5"> 256</span><span style="color:#24292E">]</span></span>
+<span class="line"><span style="color:#24292E">        res.append(char </span><span style="color:#D73A49">^</span><span style="color:#24292E"> k)</span></span>
+<span class="line"><span style="color:#D73A49">    return</span><span style="color:#24292E"> res</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">def</span><span style="color:#6F42C1"> rc4_crypt2</span><span style="color:#24292E">(s, data):</span></span>
+<span class="line"><span style="color:#24292E">    i, j </span><span style="color:#D73A49">=</span><span style="color:#005CC5"> 0</span><span style="color:#24292E">, </span><span style="color:#005CC5">0</span></span>
+<span class="line"><span style="color:#24292E">    res </span><span style="color:#D73A49">=</span><span style="color:#24292E"> []</span></span>
+<span class="line"><span style="color:#D73A49">    for</span><span style="color:#24292E"> char </span><span style="color:#D73A49">in</span><span style="color:#24292E"> data:</span></span>
+<span class="line"><span style="color:#24292E">        i </span><span style="color:#D73A49">=</span><span style="color:#24292E"> (i </span><span style="color:#D73A49">+</span><span style="color:#005CC5"> 1</span><span style="color:#24292E">) </span><span style="color:#D73A49">%</span><span style="color:#005CC5"> 256</span></span>
+<span class="line"><span style="color:#24292E">        j </span><span style="color:#D73A49">=</span><span style="color:#24292E"> (j </span><span style="color:#D73A49">+</span><span style="color:#24292E"> s[i]) </span><span style="color:#D73A49">%</span><span style="color:#005CC5"> 256</span></span>
+<span class="line"><span style="color:#24292E">        s[i], s[j] </span><span style="color:#D73A49">=</span><span style="color:#24292E"> s[j], s[i]</span></span>
+<span class="line"><span style="color:#24292E">        k </span><span style="color:#D73A49">=</span><span style="color:#24292E"> s[(s[i] </span><span style="color:#D73A49">+</span><span style="color:#24292E"> s[j]) </span><span style="color:#D73A49">%</span><span style="color:#005CC5"> 256</span><span style="color:#24292E">]</span></span>
+<span class="line"><span style="color:#24292E">        res.append((char </span><span style="color:#D73A49">+</span><span style="color:#24292E"> k) </span><span style="color:#D73A49">%</span><span style="color:#005CC5"> 256</span><span style="color:#24292E">) </span></span>
+<span class="line"><span style="color:#D73A49">    return</span><span style="color:#24292E"> res</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">key1 </span><span style="color:#D73A49">=</span><span style="color:#24292E"> [</span><span style="color:#005CC5">ord</span><span style="color:#24292E">(b) </span><span style="color:#D73A49">for</span><span style="color:#24292E"> b </span><span style="color:#D73A49">in</span><span style="color:#032F62"> "keykey"</span><span style="color:#24292E">]</span></span>
+<span class="line"><span style="color:#24292E">data1 </span><span style="color:#D73A49">=</span><span style="color:#24292E"> [</span><span style="color:#005CC5">ord</span><span style="color:#24292E">(b) </span><span style="color:#D73A49">for</span><span style="color:#24292E"> b </span><span style="color:#D73A49">in</span><span style="color:#032F62"> "ban_debug!"</span><span style="color:#24292E">]</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">s1 </span><span style="color:#D73A49">=</span><span style="color:#24292E"> rc4_init(key1)</span></span>
+<span class="line"><span style="color:#24292E">res </span><span style="color:#D73A49">=</span><span style="color:#24292E"> rc4_crypt1(s1, data1)</span></span>
+<span class="line"><span style="color:#005CC5">print</span><span style="color:#24292E">(res)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">enc </span><span style="color:#D73A49">=</span><span style="color:#24292E"> [</span></span>
+<span class="line"><span style="color:#D73A49">    0x</span><span style="color:#005CC5">4E</span><span style="color:#24292E">, </span><span style="color:#D73A49">0x</span><span style="color:#005CC5">47</span><span style="color:#24292E">, </span><span style="color:#D73A49">0x</span><span style="color:#005CC5">38</span><span style="color:#24292E">, </span><span style="color:#D73A49">0x</span><span style="color:#005CC5">47</span><span style="color:#24292E">, </span><span style="color:#D73A49">0x</span><span style="color:#005CC5">62</span><span style="color:#24292E">, </span><span style="color:#D73A49">0x</span><span style="color:#005CC5">0A</span><span style="color:#24292E">, </span><span style="color:#D73A49">0x</span><span style="color:#005CC5">79</span><span style="color:#24292E">, </span><span style="color:#D73A49">0x</span><span style="color:#005CC5">6A</span><span style="color:#24292E">, </span><span style="color:#D73A49">0x</span><span style="color:#005CC5">03</span><span style="color:#24292E">, </span><span style="color:#D73A49">0x</span><span style="color:#005CC5">66</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#D73A49">    0x</span><span style="color:#005CC5">C0</span><span style="color:#24292E">, </span><span style="color:#D73A49">0x</span><span style="color:#005CC5">69</span><span style="color:#24292E">, </span><span style="color:#D73A49">0x</span><span style="color:#005CC5">8D</span><span style="color:#24292E">, </span><span style="color:#D73A49">0x</span><span style="color:#005CC5">1C</span><span style="color:#24292E">, </span><span style="color:#D73A49">0x</span><span style="color:#005CC5">84</span><span style="color:#24292E">, </span><span style="color:#D73A49">0x</span><span style="color:#005CC5">0F</span><span style="color:#24292E">, </span><span style="color:#D73A49">0x</span><span style="color:#005CC5">54</span><span style="color:#24292E">, </span><span style="color:#D73A49">0x</span><span style="color:#005CC5">4A</span><span style="color:#24292E">, </span><span style="color:#D73A49">0x</span><span style="color:#005CC5">3B</span><span style="color:#24292E">, </span><span style="color:#D73A49">0x</span><span style="color:#005CC5">08</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#D73A49">    0x</span><span style="color:#005CC5">E3</span><span style="color:#24292E">, </span><span style="color:#D73A49">0x</span><span style="color:#005CC5">30</span><span style="color:#24292E">, </span><span style="color:#D73A49">0x</span><span style="color:#005CC5">4F</span><span style="color:#24292E">, </span><span style="color:#D73A49">0x</span><span style="color:#005CC5">B9</span><span style="color:#24292E">, </span><span style="color:#D73A49">0x</span><span style="color:#005CC5">6C</span><span style="color:#24292E">, </span><span style="color:#D73A49">0x</span><span style="color:#005CC5">AB</span><span style="color:#24292E">, </span><span style="color:#D73A49">0x</span><span style="color:#005CC5">36</span><span style="color:#24292E">, </span><span style="color:#D73A49">0x</span><span style="color:#005CC5">24</span><span style="color:#24292E">, </span><span style="color:#D73A49">0x</span><span style="color:#005CC5">52</span><span style="color:#24292E">, </span><span style="color:#D73A49">0x</span><span style="color:#005CC5">81</span><span style="color:#24292E">,</span></span>
+<span class="line"><span style="color:#D73A49">    0x</span><span style="color:#005CC5">CF</span></span>
+<span class="line"><span style="color:#24292E">]</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">s2 </span><span style="color:#D73A49">=</span><span style="color:#24292E"> rc4_init(res)</span></span>
+<span class="line"><span style="color:#24292E">flag_ints </span><span style="color:#D73A49">=</span><span style="color:#24292E"> rc4_crypt2(s2, enc)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">flag </span><span style="color:#D73A49">=</span><span style="color:#032F62"> ""</span><span style="color:#24292E">.join(</span><span style="color:#005CC5">chr</span><span style="color:#24292E">(i) </span><span style="color:#D73A49">for</span><span style="color:#24292E"> i </span><span style="color:#D73A49">in</span><span style="color:#24292E"> flag_ints)</span></span>
+<span class="line"><span style="color:#005CC5">print</span><span style="color:#24292E">(flag)    </span></span>
+<span class="line"><span style="color:#032F62">'''</span></span>
+<span class="line"><span style="color:#032F62">运行结果</span></span>
+<span class="line"><span style="color:#032F62">[105, 13, 90, 178, 64, 234, 25, 63, 47, 106]</span></span>
+<span class="line"><span style="color:#032F62">flag{1237-12938-9372-1923-4u92}</span></span>
+<span class="line"><span style="color:#032F62">'''</span><span style="color:#24292E"> </span></span></code></pre>
+<h2 id="reverse2">reverse2</h2>
+<h3 id="思路-1">思路:</h3>
+<p>有upx， 十六进制查看upx特征是否被修改</p>
+<p><img alt="image-20241110164828280" loading="lazy" decoding="async" fetchpriority="auto" width="677" height="321" src="/_astro/image-20241110164828280.DkgIUfPX_Z1DqMSl.webp" ></p>
+<p>将这三个<code>ABC</code>改回成<code>UPX</code>就能脱壳</p>
+<p><img alt="image-20241110164949354" loading="lazy" decoding="async" fetchpriority="auto" width="1160" height="974" src="/_astro/image-20241110164949354.CxcGEgPk_Z1TK9PP.webp" ></p>
+<p>ida分析代码</p>
+<p><code>main</code>函数中看到一个密文</p>
+<p><img alt="image-20241110165204829" loading="lazy" decoding="async" fetchpriority="auto" width="1396" height="884" src="/_astro/image-20241110165204829.Dqz1isVb_10W8Nd.webp" ></p>
+<p>往下看 很明显的<code>base64</code>加密，查看<code>a9876543210zyxw</code>数组</p>
+<p><img alt="image-20241110165249211" loading="lazy" decoding="async" fetchpriority="auto" width="1485" height="922" src="/_astro/image-20241110165249211.Diszf_35_1CC5Mu.webp" ></p>
+<p>是<code>base64</code>换表</p>
+<p><img alt="image-20241110165347969" loading="lazy" decoding="async" fetchpriority="auto" width="1304" height="569" src="/_astro/image-20241110165347969.CS_uNGHo_Z11NM4f.webp" ></p>
+<h3 id="exp-1">exp:</h3>
+<p>赛博厨子直接一把梭</p>
+<p><img alt="image-20241110165557240" loading="lazy" decoding="async" fetchpriority="auto" width="1580" height="954" src="/_astro/image-20241110165557240.KB4sfixp_Z1rKKJb.webp" ></p> </div> <p itemprop="keywords" class="tags">标签: reverse, 第七届浙江省大学生网络与信息安全竞赛, 杭电ctf</p> </article> <ul class="post-near"> <li>上一篇: <a href="/post/hvm-hackingtoys">hvm-hackingtoys</a></li> <li>下一篇: <a href="/post/attacking-a-box-news">News</a></li> </ul> </div>  <div class="col-mb-12 col-offset-1 col-3 kit-hidden-tb" id="secondary" role="complementary"> <section class="widget" id="toc-widget"> <h3 class="widget-title">文章目录</h3> <ul class="widget-list toc-list"> <li class="toc-level-2"> <a href="#reverse1" data-target="reverse1">Reverse1</a> </li><li class="toc-level-3"> <a href="#思路" data-target="思路">思路：</a> </li><li class="toc-level-3"> <a href="#exp" data-target="exp">exp：</a> </li><li class="toc-level-2"> <a href="#reverse2" data-target="reverse2">reverse2</a> </li><li class="toc-level-3"> <a href="#思路-1" data-target="思路-1">思路:</a> </li><li class="toc-level-3"> <a href="#exp-1" data-target="exp-1">exp:</a> </li> </ul> </section> <section class="widget"> <h3 class="widget-title">最新文章</h3> <ul class="widget-list"> <li><a href="/post/ycb-2025-reverse-plus">2025羊城杯初赛Reverse-PLUS详细wp</a></li><li><a href="/post/ycb-2025-writeup">2025羊城杯初赛部分wp</a></li><li><a href="/post/天一永安杯初赛-2025-writeup">第八届宁波市网络安全大赛reverse-wp</a></li><li><a href="/post/exchange">群友靶机-exchange</a></li><li><a href="/post/attacking-a-box-news">News</a></li> </ul> </section> <section class="widget"> <h3 class="widget-title">分类</h3> <ul class="widget-list"> <li><a href="/category/CTF">CTF</a></li><li><a href="/category/渗透">渗透</a></li> </ul> </section> <!-- 其它 --> <!-- <section class="widget">
+        <h3 class="widget-title">其它</h3>
+        <ul class="widget-list">
+            <li><a href="/rss.xml">文章 RSS</a></li>
+            <li><a href="https://astro.build">Astro</a></li>
+        </ul>
+    </section> --> </div>  <script type="module">function l(){const a=document.querySelectorAll(".toc-list a[data-target]");if(a.length===0)return;a.forEach(o=>{o.addEventListener("click",t=>{t.preventDefault();const r=o.getAttribute("data-target"),c=document.getElementById(r);c&&c.scrollIntoView({behavior:"smooth",block:"start"})})});const e=Array.from(a).map(o=>document.getElementById(o.getAttribute("data-target"))).filter(Boolean);function s(){let o="";for(let t=e.length-1;t>=0;t--)if(e[t].getBoundingClientRect().top<=100){o=e[t].id;break}a.forEach(t=>{t.classList.toggle("active",t.getAttribute("data-target")===o)})}s(),window.addEventListener("scroll",s,{passive:!0})}function u(){const a=document.querySelectorAll("pre.astro-code");let e=null;a.forEach(t=>{const r=t.querySelector("code");if(!r)return;const c=document.createElement("div");c.className="code-wrapper",t.parentNode.insertBefore(c,t),c.appendChild(t);const n=document.createElement("button");n.className="copy-button",n.innerHTML=`
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <rect x="9" y="9" width="13" height="13" rx="2"></rect>
+        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+      </svg>
+      <span>Copy</span>
+    `,c.appendChild(n),c.addEventListener("click",i=>{i.target.closest(".copy-button")||(document.querySelectorAll(".code-wrapper").forEach(d=>d.classList.remove("show-copy")),c.classList.add("show-copy"))}),n.addEventListener("click",async()=>{try{await navigator.clipboard.writeText(r.innerText),e&&e!==n&&o(e),s(n),e=n}catch{n.querySelector("span").textContent="Failed"}})}),document.addEventListener("click",t=>{t.target.closest(".code-wrapper")||document.querySelectorAll(".code-wrapper").forEach(r=>r.classList.remove("show-copy"))}),document.addEventListener("copy",()=>{e&&(o(e),e=null)});function s(t){t.classList.add("success"),t.querySelector("span").textContent="Copied!"}function o(t){t.classList.remove("success"),t.querySelector("span").textContent="Copy"}}window.addEventListener("DOMContentLoaded",()=>{l(),u()});</script>  </div> </div> </div> <footer id="footer" role="contentinfo">
+&copy; 2026 <a href="/">yulian Lab</a>.
+    由 <a href="https://astro.build">Astro</a> 驱动.
+</footer>  <link rel="stylesheet" href="/viewer/viewer.min.css"> <script src="/viewer/viewer.min.js"></script> <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const postContent = document.querySelector('.post-content');
+        
+        if (postContent && postContent.querySelectorAll('img').length > 0) {
+            new Viewer(postContent, {
+                inline: false,      // 模态框模式（点击图片弹出）
+                button: true,       // 显示右上角关闭按钮
+                navbar: true,       // 显示底部缩略图导航栏（多图时可以像相册一样切换）
+                title: true,        // 显示图片标题（自动读取 Markdown 中图片的 alt 描述）
+                toolbar: true,      // 显示底部工具栏（包含放大、缩小、1:1、旋转、翻转等按钮）
+                tooltip: true,      // 缩放时显示百分比提示
+                movable: true,      // 允许鼠标拖拽移动图片
+                zoomable: true,     // 允许滚轮缩放
+                rotatable: true,    // 允许旋转图片
+                scalable: true,     // 允许翻转图片
+                transition: true,   // 开启 CSS3 平滑过渡动画
+                fullscreen: true,   // 允许全屏播放
+                keyboard: true,     // 支持键盘快捷键（ESC退出，左右方向键切换图片）
+                
+                zIndex: 9999,
+                zIndexInline: 9999
+            });
+        }
+    });
+</script> </body> </html>

