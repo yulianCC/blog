@@ -43,7 +43,7 @@
     });
 </script> </body> </html>  <script>(function(){const pageSize = 4;
 
-    function removeMarkdown(md: string) {
+    function removeMarkdown(md) {
         if (!md) return '';
         return md
             .replace(/!\[[^\]]*\]\([^)]*\)/g, '')
